@@ -1,0 +1,261 @@
+openapi: 3.0.0
+info:
+  title: 锦顺 ERP Mock（领料）
+  description: |
+    Mock ERP 登录与领料接口。数据分析/查库存走主 Chatflow Fast HTTP（子 Chatflow API），不走本服务。
+    ngrok 穿透时所有请求需 Header：ngrok-skip-browser-warning: true
+    业务接口需 Header：Authorization: Bearer <access_token>
+  version: 1.0.0
+
+servers:
+  # ngrok 重启后子域会变，请同步修改此处与 Dify ERP_BASE_URL
+  - url: https://a4d5-218-95-67-64.ngrok-free.app
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 登录返回的 access_token，格式 Bearer xxx
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/auth/login:
+    post:
+      operationId: erp_login
+      summary: 用户登录 ERP
+      description: |
+        校验工号密码，返回 access_token 与 user 信息。
+        仅当用户说「登录」、未登录要领料、或收到 401 时调用。不要用于数据分析。
+      parameters:
+        - name: ngrok-skip-browser-warning
+          in: header
+          required: true
+          schema:
+            type: string
+            default: "true"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  description: 工号
+                password:
+                  type: string
+                  description: 密码
+      responses:
+        "200":
+          description: 登录成功
+
+  /api/materials/search:
+    get:
+      operationId: erp_search_material
+      summary: 按关键字搜索物料
+      description: |
+        Tool 测试 / 联调用。**生产领料不调用**——料号由 DATA Fast（Text2SQL）与查库存一并返回。
+      parameters:
+        - name: ngrok-skip-browser-warning
+          in: header
+          required: true
+          schema:
+            type: string
+            default: "true"
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: |
+            必填。Bearer 登录 token。示例：Bearer eyJhbGciOi...
+            Dify Agent 调 Tool 时必须传此 Header；画布 HTTP 链绑定 conversation.auth_token。
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 物料名、料号、规格关键字
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: 物料列表
+
+  /api/inventory/check:
+    get:
+      operationId: erp_check_inventory
+      summary: 查询物料可用库存
+      description: |
+        **生产领料链不调用**。料号/库存由主 Chatflow **DATA Fast**（Text2SQL）一次查齐。
+        仅 OpenAPI/Tool 测试页手工调试 Mock 用。
+      parameters:
+        - name: ngrok-skip-browser-warning
+          in: header
+          required: true
+          schema:
+            type: string
+            default: "true"
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: |
+            必填 Header。Bearer + 登录 access_token。Agent 每次调用 erp_* 都必须传此参数。
+        - name: material_code
+          in: query
+          schema:
+            type: string
+          description: 料号（与 material_keyword 二选一）
+        - name: material_keyword
+          in: query
+          schema:
+            type: string
+          description: 模糊物料关键字
+      responses:
+        "200":
+          description: 库存信息
+
+  /api/requisition/draft:
+    post:
+      operationId: erp_save_draft
+      summary: 保存领料草稿
+      description: |
+        创建或更新领料草稿，不提交审批。用户未确认前禁止调用 submit。
+      parameters:
+        - name: ngrok-skip-browser-warning
+          in: header
+          required: true
+          schema:
+            type: string
+            default: "true"
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 必填 Header。Bearer + access_token。与 save_draft/submit 相同。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                draft_id:
+                  type: string
+                  nullable: true
+                  description: Body 可选。空或不传=新建草稿；传值=更新已有草稿
+                dept_id:
+                  type: string
+                  description: Body 可选。默认用登录用户部门
+                purpose:
+                  type: string
+                  description: Body。领料用途，默认「生产领用」
+                remark:
+                  type: string
+                  description: Body 可选。备注
+                items:
+                  type: array
+                  description: Body 必填。领料明细，至少一行
+                  items:
+                    type: object
+                    required: [material_code, quantity]
+                    properties:
+                      material_code:
+                        type: string
+                        description: 料号，来自 search 或用户指定
+                      quantity:
+                        type: number
+                        description: 申请数量，必须来自用户原话
+                      unit:
+                        type: string
+                        description: 单位，如 KG、张
+      responses:
+        "200":
+          description: 草稿已保存
+
+  /api/requisition/submit:
+    post:
+      operationId: erp_submit_requisition
+      summary: 提交领料单到审批
+      description: |
+        用户明确说「确认提交」后调用。
+        创单出 GON；**不扣减/占用库存**（够不够领由查数+确认卡片决定）。
+      parameters:
+        - name: ngrok-skip-browser-warning
+          in: header
+          required: true
+          schema:
+            type: string
+            default: "true"
+          description: ngrok 穿透必填，固定传 true
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: |
+            必填 Header。Bearer + 登录 access_token。
+            Agent 每次调用都必须传，值来自会话 auth_token，示例：Bearer q944Xrhv...
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [draft_id, idempotency_key]
+              properties:
+                draft_id:
+                  type: string
+                  description: erp_save_draft 返回的草稿号，如 DRAFT-20260611-001
+                idempotency_key:
+                  type: string
+                  description: UUID 字符串，防 Agent 重复调用产生多单
+      responses:
+        "200":
+          description: 提交成功，返回 requisition_no（GON 单号）
+        "404":
+          description: DRAFT_EXPIRED 草稿不存在
+
+  /api/requisition/{requisition_no}:
+    get:
+      operationId: erp_get_requisition
+      summary: 查询领料单详情
+      description: 按 GON 单号查审批状态与明细。
+      parameters:
+        - name: ngrok-skip-browser-warning
+          in: header
+          required: true
+          schema:
+            type: string
+            default: "true"
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 必填 Header。Bearer + access_token。
+        - name: requisition_no
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 如 GON20260611001
+      responses:
+        "200":
+          description: 领料单详情

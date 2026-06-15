@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: query_material_data
+  description: |
+    查询锦顺物料数据库并做数据分析（Custom Tool 在 Dify 容器内调用，请用内网 Base URL）。
+  version: 1.0.0
+
+servers:
+  # 同一套 Dify Docker：Custom Tool 测试请用内网（勿用公网 IP:15657，容器内会 Reached maximum retries）
+  - url: http://nginx/v1
+  # 若 nginx 不通，改为: http://api:5001/v1
+
+paths:
+  /chat-messages:
+    post:
+      operationId: query_material_data
+      summary: 查询并分析锦顺物料数据
+      description: |
+        当用户问题涉及：统计、查询、多少、排名、占比、趋势、库存、采购、出入库、明细时使用。
+        将用户完整问题传入 query 参数。不要用于领料申请。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+                - response_mode
+                - user
+              properties:
+                query:
+                  type: string
+                  description: 用户完整自然语言问题
+                inputs:
+                  type: object
+                  default: {}
+                response_mode:
+                  type: string
+                  enum:
+                    - streaming
+                    - blocking
+                  default: streaming
+                user:
+                  type: string
+                  default: agent-user
+                conversation_id:
+                  type: string
+                  description: 可选，追问时传入
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                  conversation_id:
+                    type: string

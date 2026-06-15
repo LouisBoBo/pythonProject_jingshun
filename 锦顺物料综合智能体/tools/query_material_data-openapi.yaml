@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: query_material_data
+  description: |
+    查询锦顺物料数据库并做数据分析（调用 Chatflow「锦顺-数据分析子流程」）。
+    用户问统计/查询/排名/占比/库存/明细时使用；不用于领料。
+  version: 1.0.0
+
+servers:
+  # Custom Tool 在 Dify 容器内调用，用内网地址（勿用公网 IP:15657）
+  - url: http://nginx/v1
+
+paths:
+  /chat-messages:
+    post:
+      operationId: query_material_data
+      summary: 查询并分析锦顺物料数据
+      description: |
+        当用户问题涉及：统计、查询、多少、排名、占比、趋势、库存、采购、出入库、明细时使用。
+        将用户完整问题传入 query 参数。
+        不要用于领料申请（请使用 erp_* 工具）。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+                - response_mode
+                - user
+              properties:
+                query:
+                  type: string
+                  description: 用户完整自然语言问题
+                inputs:
+                  type: object
+                  description: Chatflow 开始变量，无额外变量传 {}
+                  default: {}
+                response_mode:
+                  type: string
+                  description: 锦顺现网必须用 streaming（blocking 会 timeout）
+                  enum:
+                    - streaming
+                    - blocking
+                  default: streaming
+                user:
+                  type: string
+                  description: 用户标识，同一用户多轮可保持一致
+                  default: agent-user
+                conversation_id:
+                  type: string
+                  description: 可选，追问时传入上次返回的 conversation_id
+      responses:
+        '200':
+          description: blocking 返回 JSON answer；streaming 返回 SSE 事件流
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                  conversation_id:
+                    type: string

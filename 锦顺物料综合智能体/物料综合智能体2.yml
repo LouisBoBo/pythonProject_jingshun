@@ -1,0 +1,3089 @@
+app:
+  description: 查询物料库存及申请领料
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: 物料综合智能体
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai_api_compatible:0.0.35@bb81bce2b7e04af8178eb2fb36cc6e1eb75aadbc98d31bc2c858b4648ba63c26
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables:
+  - description: 物料缓存
+    id: bba55e5c-5cc8-4163-a6b5-3b888198a0a9
+    name: requisition_pick_cache_json
+    selector:
+    - conversation
+    - requisition_pick_cache_json
+    value: ''
+    value_type: string
+  - description: 等用户回料号
+    id: 0d917210-3e38-4afb-b6b2-f45dc04a1746
+    name: requisition_pick_waiting
+    selector:
+    - conversation
+    - requisition_pick_waiting
+    value: ''
+    value_type: string
+  - description: 选型轮保存的原话
+    id: 59ecf562-ed02-451d-b826-7da9826cde18
+    name: requisition_intent_query
+    selector:
+    - conversation
+    - requisition_intent_query
+    value: ''
+    value_type: string
+  - description: 数据行数
+    id: 0adca057-3efe-435f-a81d-63c764511fe6
+    name: requisition_match_count
+    selector:
+    - conversation
+    - requisition_match_count
+    value: ''
+    value_type: string
+  - description: 数据明细
+    id: 35dfd4b4-67ab-497f-81e0-3f5bfe5f1ac8
+    name: requisition_pick_list
+    selector:
+    - conversation
+    - requisition_pick_list
+    value: ''
+    value_type: string
+  - description: 是否需用户选型
+    id: f2c9039d-584d-44e0-b5d2-d44a7eb65309
+    name: requisition_pick_required
+    selector:
+    - conversation
+    - requisition_pick_required
+    value: ''
+    value_type: string
+  - description: 抽取是否成功
+    id: 5d5663d2-2fcd-4c49-8bd9-1c00839b6202
+    name: requisition_inventory_extract
+    selector:
+    - conversation
+    - requisition_inventory_extract
+    value: ''
+    value_type: string
+  - description: ''
+    id: 5f6f4c00-3d85-4489-99fa-944fe42dd140
+    name: requisition_inventory_detail
+    selector:
+    - conversation
+    - requisition_inventory_detail
+    value: ''
+    value_type: string
+  - description: ''
+    id: b5af7885-392c-44d4-b837-b055d003c3df
+    name: requisition_inventory_unit
+    selector:
+    - conversation
+    - requisition_inventory_unit
+    value: 物料单位
+    value_type: string
+  - description: ''
+    id: 1a70804a-82bf-4c07-9a19-489005bc523d
+    name: requisition_available_qty
+    selector:
+    - conversation
+    - requisition_available_qty
+    value: 物料库存
+    value_type: string
+  - description: ''
+    id: 23206027-0450-4bfd-9eff-3090c4246129
+    name: requisition_material_name
+    selector:
+    - conversation
+    - requisition_material_name
+    value: 物料名称
+    value_type: string
+  - description: ''
+    id: 8ad4afbf-0582-43e0-8846-0b18762b64e6
+    name: requisition_material_code
+    selector:
+    - conversation
+    - requisition_material_code
+    value: 物料编码
+    value_type: string
+  - description: ''
+    id: 900cce93-96b3-42db-a795-766907cef76a
+    name: login_pending
+    selector:
+    - conversation
+    - login_pending
+    value: ''
+    value_type: string
+  - description: ''
+    id: 61d1d6e1-7333-45d4-b891-964e8a233acd
+    name: last_query_detail
+    selector:
+    - conversation
+    - last_query_detail
+    value: ''
+    value_type: string
+  - description: ''
+    id: 30811bdb-f1ec-4d3c-a969-be3c8b266510
+    name: last_query_summary
+    selector:
+    - conversation
+    - last_query_summary
+    value: ''
+    value_type: string
+  - description: ''
+    id: 4c53f0b0-ac70-4bdc-bc84-2812f0673ae3
+    name: data_analysis_conversation_id
+    selector:
+    - conversation
+    - data_analysis_conversation_id
+    value: ''
+    value_type: string
+  - description: ''
+    id: a1434136-7498-4121-860e-59bdad83c9f1
+    name: last_material
+    selector:
+    - conversation
+    - last_material
+    value: {}
+    value_type: object
+  - description: ''
+    id: 22320e28-6a34-440d-beaa-3130fd85e5b3
+    name: requisition_draft
+    selector:
+    - conversation
+    - requisition_draft
+    value: {}
+    value_type: object
+  - description: ''
+    id: 4b8cebcc-7666-4e57-a088-91d34f46f990
+    name: user_profile
+    selector:
+    - conversation
+    - user_profile
+    value: {}
+    value_type: object
+  - description: ''
+    id: 6c4c366f-c06e-48e0-8492-47d8bd9520e6
+    name: token_expires_at
+    selector:
+    - conversation
+    - token_expires_at
+    value: ''
+    value_type: string
+  - description: ''
+    id: 60fefe4d-aca7-4098-8369-f44d139d9e2d
+    name: auth_token
+    selector:
+    - conversation
+    - auth_token
+    value: ''
+    value_type: string
+  environment_variables:
+  - description: ''
+    id: 37d71d57-b1e9-4ccb-b5e6-ae7f35206981
+    name: ERP_BASE_URL
+    selector:
+    - env
+    - ERP_BASE_URL
+    value: https://a4d5-218-95-67-64.ngrok-free.app/api
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: agent
+        targetType: answer
+      id: 1780974239418-source-answer-target
+      source: '1780974239418'
+      sourceHandle: source
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: if-else
+      id: 1781059662366-1-1781082215144-target
+      source: '1781059662366'
+      sourceHandle: '1'
+      target: '1781082215144'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: if-else
+      id: 1781059662366-2-1781082215144-target
+      source: '1781059662366'
+      sourceHandle: '2'
+      target: '1781082215144'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1781082593528-source-1781096559566-target
+      source: '1781082593528'
+      sourceHandle: source
+      target: '1781096559566'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: 1781096559566-source-1781096760474-target
+      source: '1781096559566'
+      sourceHandle: source
+      target: '1781096760474'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: 1781096760474-source-1781096844325-target
+      source: '1781096760474'
+      sourceHandle: source
+      target: '1781096844325'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1781082215144-db853638-3c79-4e14-86e4-8378e466be9f-1781105477713-target
+      source: '1781082215144'
+      sourceHandle: db853638-3c79-4e14-86e4-8378e466be9f
+      target: '1781105477713'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1781082215144-true-1781105727514-target
+      source: '1781082215144'
+      sourceHandle: 'true'
+      target: '1781105727514'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1781105727514-source-1781082593528-target
+      source: '1781105727514'
+      sourceHandle: source
+      target: '1781082593528'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: code
+      id: 1780974226623-source-1781146251008-target
+      source: '1780974226623'
+      sourceHandle: source
+      target: '1781146251008'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1781146251008-source-1781146531923-target
+      source: '1781146251008'
+      sourceHandle: source
+      target: '1781146531923'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1781146531923-true-1781148949662-target
+      source: '1781146531923'
+      sourceHandle: 'true'
+      target: '1781148949662'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1781148949662-source-1781148273413-target
+      source: '1781148949662'
+      sourceHandle: source
+      target: '1781148273413'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1781148273413-source-1781149174521-target
+      source: '1781148273413'
+      sourceHandle: source
+      target: '1781149174521'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: 1781149174521-source-1781149377042-target
+      source: '1781149174521'
+      sourceHandle: source
+      target: '1781149377042'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: 1781149377042-source-1781149532297-target
+      source: '1781149377042'
+      sourceHandle: source
+      target: '1781149532297'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1781146531923-312f8757-7ccd-457a-8391-6801f1a3a109-1781156368219-target
+      source: '1781146531923'
+      sourceHandle: 312f8757-7ccd-457a-8391-6801f1a3a109
+      target: '1781156368219'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1781146531923-false-1781162580031-target
+      source: '1781146531923'
+      sourceHandle: 'false'
+      target: '1781162580031'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1781162580031-source-1781163010171-target
+      source: '1781162580031'
+      sourceHandle: source
+      target: '1781163010171'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1781163010171-true-1781228840391-target
+      source: '1781163010171'
+      sourceHandle: 'true'
+      target: '1781228840391'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1781229131287-source-1781229323739-target
+      source: '1781229131287'
+      sourceHandle: source
+      target: '1781229323739'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1781229323739-source-17812296495870-target
+      source: '1781229323739'
+      sourceHandle: source
+      target: '17812296495870'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 17812296495870-source-17812297751920-target
+      source: '17812296495870'
+      sourceHandle: source
+      target: '17812297751920'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: question-classifier
+      id: 1781163010171-false-1781059662366-target
+      source: '1781163010171'
+      sourceHandle: 'false'
+      target: '1781059662366'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1781228840391-source-1781231050993-target
+      source: '1781228840391'
+      sourceHandle: source
+      target: '1781231050993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1781231050993-true-1781229131287-target
+      source: '1781231050993'
+      sourceHandle: 'true'
+      target: '1781229131287'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 17812297751920-source-1781232049095-target
+      source: '17812297751920'
+      sourceHandle: source
+      target: '1781232049095'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1781232049095-source-1781233246378-target
+      source: '1781232049095'
+      sourceHandle: source
+      target: '1781233246378'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1781233246378-false-1781233339981-target
+      source: '1781233246378'
+      sourceHandle: 'false'
+      target: '1781233339981'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: 1781233415082-source-1781233481846-target
+      source: '1781233415082'
+      sourceHandle: source
+      target: '1781233481846'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: assigner
+      id: 1781233246378-10e8f769-74ff-488a-b709-37601b6c0c59-1781232690058-target
+      source: '1781233246378'
+      sourceHandle: 10e8f769-74ff-488a-b709-37601b6c0c59
+      target: '1781232690058'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: agent
+      id: 1781232690058-source-17812520992760-target
+      source: '1781232690058'
+      sourceHandle: source
+      target: '17812520992760'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: agent
+        targetType: answer
+      id: 17812520992760-source-1781252141636-target
+      source: '17812520992760'
+      sourceHandle: source
+      target: '1781252141636'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1781233246378-true-1781252696907-target
+      source: '1781233246378'
+      sourceHandle: 'true'
+      target: '1781252696907'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: 1781252696907-source-1781233415082-target
+      source: '1781252696907'
+      sourceHandle: source
+      target: '1781233415082'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: 1781231050993-false-1781256072178-target
+      source: '1781231050993'
+      sourceHandle: 'false'
+      target: '1781256072178'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: agent
+      id: 1781256072178-false-1780974239418-target
+      source: '1781256072178'
+      sourceHandle: 'false'
+      target: '1780974239418'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1781256072178-true-1781256196304-target
+      source: '1781256072178'
+      sourceHandle: 'true'
+      target: '1781256196304'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1781256196304-source-1781256514330-target
+      source: '1781256196304'
+      sourceHandle: source
+      target: '1781256514330'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1781256514330-false-1781256663503-target
+      source: '1781256514330'
+      sourceHandle: 'false'
+      target: '1781256663503'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: assigner
+      id: 1781256514330-true-17812724593290-target
+      source: '1781256514330'
+      sourceHandle: 'true'
+      target: '17812724593290'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: agent
+      id: 17812724593290-source-17812520992760-target
+      source: '17812724593290'
+      sourceHandle: source
+      target: '17812520992760'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables: []
+      height: 73
+      id: '1780974226623'
+      position:
+        x: -508.808652582624
+        y: 282
+      positionAbsolute:
+        x: -508.808652582624
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1780974239418.text#}}'
+        selected: false
+        title: 直接回复
+        type: answer
+        variables: []
+      height: 103
+      id: answer
+      position:
+        x: 3719.880824246256
+        y: 533.4170976567854
+      positionAbsolute:
+        x: 3719.880824246256
+        y: 533.4170976567854
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        agent_parameters:
+          instruction:
+            type: constant
+            value: "# 主控 Agent 提示词 · 阶段 5 领料版（DATA Fast 读 · Agent 只写）\n\n\n> **适用**：**仅当**画布\
+              \ `extract_ok=true`（料号已唯一）时才会进入本 Agent。  \n> **多条物料选型**由画布 **选型 Answer**\
+              \ 处理，**不会**进入本节点。  \n> **架构**：[22-库存与领料数据源定稿.md](../docs/22-库存与领料数据源定稿.md)\n\
+              \n\n---\n\n\n## 当前会话\n\n\n- 用户：{{#conversation.user_profile.name#}}（{{#conversation.user_profile.dept_name#}}）\n\
+              - ERP Token：{{#conversation.auth_token#}}\n- draft_id：{{#conversation.requisition_draft_id#}}\n\
+              \n\n**领料原话（含数量，选型后续用）**：{{#conversation.requisition_intent_query#}}\
+              \  \n若本轮用户只说料号、未写数量，**申请数量从「领料原话」解析**，勿默认 1。（空=尚未建草稿）\n\n\n**画布 DATA\
+              \ Fast 已确定唯一物料：**\n\n\n| 字段 | 值 |\n|------|-----|\n| 料号 | {{#conversation.requisition_material_code#}}\
+              \ |\n| 物料名称 | {{#conversation.requisition_material_name#}} |\n| 可用库存\
+              \ | {{#conversation.requisition_available_qty#}} {{#conversation.requisition_inventory_unit#}}\
+              \ |\n\n\n---\n\n\n## 角色\n\n\n**只负责写 ERP 工单**。登录由画布处理，**禁止** `erp_login`。\n\
+              \n\n**只挂 3 个 Tool**：`erp_save_draft` / `erp_submit_requisition` / `erp_get_requisition`\n\
+              \n\n**禁止**任何读类 Tool（`query_material_data` / `erp_search_material` /\
+              \ `erp_check_inventory`）。\n\n\n`save_draft` 的 `material_code`、`unit`\
+              \ **必须**用上面会话变量；`quantity` **来自用户原话**。禁止编造料号。\n\n\n---\n\n\n## erp_*\
+              \ 参数（每条 Header 必填）\n\n\n| 参数名 | 位置 | 值 |\n|--------|--------|-----|\n\
+              | `Authorization` | Header | `Bearer {{#conversation.auth_token#}}`\
+              \ |\n| `ngrok-skip-browser-warning` | Header | `true` |\n\n\n401 →「登录已过期，请重新发送工号和密码」。\n\
+              \n\n### erp_save_draft\n\n\n| 参数 | 值 |\n|------|-----|\n| items | material_code\
+              \ / quantity / unit 见上 |\n| purpose | `生产领用` |\n| draft_id | 改数量时必填\
+              \ |\n\n\n### erp_submit_requisition\n\n\n| 参数 | 值 |\n|------|-----|\n\
+              | draft_id | save_draft 返回 |\n| idempotency_key | UUID |\n\n\n### erp_get_requisition\n\
+              \n\n| 参数 | 值 |\n|------|-----|\n| requisition_no | GON 单号（Path） |\n\n\
+              \n---\n\n\n## 铁律\n\n\n1. 料号/库存 = 会话变量，禁止第二数据源。\n2. 出卡片前必须 `save_draft`\
+              \ 成功。\n3. 禁止擅自改数量；库存不足只提示改数/取消。\n4. 「确认提交」→ 仅 `submit` → GON。\n5. draft\
+              \ 过期：同轮 save_draft → submit → 直接给单号。\n6. Final Answer 禁止 Thought、Tool\
+              \ 名、过程说明。\n\n\n---\n\n\n## 领料流程\n\n\n**料号已唯一**（本轮已进入 Agent）\n\n\n1.\
+              \ `erp_save_draft`\n2. Final Answer **仅**确认卡片\n\n\n**改数量** → `save_draft`（带\
+              \ draft_id）→ 新卡片\n\n\n**确认提交** → `submit` → GON（本轮通常 `need_fast_inventory=false`，直进\
+              \ Agent）\n\n\n**取消** → 不调 submit\n\n\n**查 GON** → `erp_get_requisition`\n\
+              \n\n---\n\n\n## 确认卡片模板\n\n\n```markdown\n### 领料申请确认\n\n\n| 项目 | 内容 |\n\
+              |------|------|\n| 申请部门 | {dept_name} |\n| 物料 | {material_name}（{material_code}）\
+              \ |\n| 申请数量 | {quantity} {unit} |\n| 当前可用库存 | {requisition_available_qty}\
+              \ {unit} |\n| 用途 | 生产领用 |\n\n\n请回复 **「确认提交」**；修改请说 **「修改数量为 X」**；取消请说\
+              \ **「取消」**。\n```\n\n\n库存不足：**当前可用库存不足（申请 X，可用 Y），暂无法提交。请回复「修改数量为 X」或「取消」。**\n\
+              \n\n---\n\n\n## Final Answer\n\n\n- 待确认：整段 = 确认卡片，零前言。\n- 已提交：单号 + 状态。\n"
+          maximum_iterations:
+            type: constant
+            value: 15
+          model:
+            type: constant
+            value:
+              completion_params: {}
+              mode: chat
+              model: Qwen3-4B-Instruct-2507-FP8
+              model_type: llm
+              provider: langgenius/openai_api_compatible/openai_api_compatible
+              type: model-selector
+          query:
+            type: constant
+            value: '{{#sys.query#}}'
+          tools:
+            type: constant
+            value:
+            - enabled: true
+              extra:
+                description: '创建或更新领料草稿，不提交审批。用户未确认前禁止调用 submit。
+
+                  '
+              parameters:
+                Authorization:
+                  auto: 1
+                  value: null
+                dept_id:
+                  auto: 1
+                  value: null
+                draft_id:
+                  auto: 1
+                  value: null
+                items:
+                  auto: 1
+                  value: null
+                ngrok-skip-browser-warning:
+                  auto: 1
+                  value: null
+                purpose:
+                  auto: 1
+                  value: null
+                remark:
+                  auto: 1
+                  value: null
+              provider_name: 47b09768-1602-4cb9-9463-ae093b05013c
+              provider_show_name: 物料申领工具
+              settings: {}
+              tool_description: '创建或更新领料草稿，不提交审批。用户未确认前禁止调用 submit。
+
+                '
+              tool_label: erp_save_draft
+              tool_name: erp_save_draft
+              type: api
+            - enabled: true
+              extra:
+                description: '仅当用户明确说「确认提交」后调用。
+
+                  必须先有 erp_save_draft 返回的 draft_id。
+
+                  每次提交尝试使用新的 idempotency_key（UUID）；用户重复说「确认提交」且同一 draft 时可复用同一 key
+                  实现幂等。
+
+                  '
+              parameters:
+                Authorization:
+                  auto: 1
+                  value: null
+                draft_id:
+                  auto: 1
+                  value: null
+                idempotency_key:
+                  auto: 1
+                  value: null
+                ngrok-skip-browser-warning:
+                  auto: 1
+                  value: null
+              provider_name: 47b09768-1602-4cb9-9463-ae093b05013c
+              provider_show_name: 物料申领工具
+              settings: {}
+              tool_description: '仅当用户明确说「确认提交」后调用。
+
+                必须先有 erp_save_draft 返回的 draft_id。
+
+                每次提交尝试使用新的 idempotency_key（UUID）；用户重复说「确认提交」且同一 draft 时可复用同一 key 实现幂等。
+
+                '
+              tool_label: erp_submit_requisition
+              tool_name: erp_submit_requisition
+              type: api
+            - enabled: true
+              extra:
+                description: 按 GON 单号查审批状态与明细。
+              parameters:
+                Authorization:
+                  auto: 1
+                  value: null
+                ngrok-skip-browser-warning:
+                  auto: 1
+                  value: null
+                requisition_no:
+                  auto: 1
+                  value: null
+              provider_name: 47b09768-1602-4cb9-9463-ae093b05013c
+              provider_show_name: 物料申领工具
+              settings: {}
+              tool_description: 按 GON 单号查审批状态与明细。
+              tool_label: erp_get_requisition
+              tool_name: erp_get_requisition
+              type: api
+        agent_strategy_label: ReAct
+        agent_strategy_name: ReAct
+        agent_strategy_provider_name: langgenius/agent/agent
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}'
+          window:
+            enabled: true
+            size: 60
+        meta:
+          minimum_dify_version: 1.7.0
+          version: 0.0.2
+        output_schema: {}
+        plugin_unique_identifier: langgenius/agent:0.0.39@ceea6a76b3a495de2df2a55bcea82e903d49b06f4d8e1463c2aa085657f27164
+        selected: false
+        title: Agent
+        tool_node_version: '2'
+        type: agent
+      height: 188
+      id: '1780974239418'
+      position:
+        x: 3321.289129884048
+        y: 533.4170976567854
+      positionAbsolute:
+        x: 3321.289129884048
+        y: 533.4170976567854
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        classes:
+        - id: '1'
+          name: '凡涉及物料**数据库统计/分析**的查询：统计、排名、占比、趋势、采购、消耗、入库、出库、明细、展开、追问。示例：「统计2025年各月物料消耗金额」「查询覆铜板26年3月用量」「提供明细」「油墨库存多少（数据分析口径）」。
+
+
+
+            **明确不属于 DATA（归 REQUISITION → Agent）**：
+
+            - 领料单/出仓单 **GON** 号查状态、审批进度（如「查询 GON20260611003 状态」「GONxxx 到哪了」）
+
+            - 我的领料单、我的申请、审批到哪
+
+            - 领料、要料、出库申请（无统计/分析时）
+
+
+
+            含「查询」二字但对象是 **GON/领料单号** 的，**不是** DATA，不要走 Fast 查数。
+
+
+            输出：DATA'
+        - id: '2'
+          name: '寒暄、能力咨询、感谢、与查数领料无关的闲聊。示例：「你好」「你能做什么」「谢谢」「在吗」。
+
+
+            输出：CHITCHAT'
+        instructions: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: Qwen3-4B-Instruct-2507-FP8
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        query_variable_selector:
+        - '1780974226623'
+        - sys.query
+        selected: false
+        title: 问题分类器
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 170
+      id: '1781059662366'
+      position:
+        x: 1988.0810364681133
+        y: 704.9404532272446
+      positionAbsolute:
+        x: 1988.0810364681133
+        y: 704.9404532272446
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 3e993476-8282-42a2-8328-e3e0fb9e53fb
+            value: DATA
+            varType: string
+            variable_selector:
+            - '1781059662366'
+            - class_name
+          id: 'true'
+          logical_operator: and
+        - case_id: db853638-3c79-4e14-86e4-8378e466be9f
+          conditions:
+          - comparison_operator: contains
+            id: 100ad7c7-702b-429f-80f9-331b30c5e865
+            value: CHITCHAT
+            varType: string
+            variable_selector:
+            - '1781059662366'
+            - class_name
+          id: db853638-3c79-4e14-86e4-8378e466be9f
+          logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 172
+      id: '1781082215144'
+      position:
+        x: 2449.1493370184653
+        y: 745.8795077255644
+      positionAbsolute:
+        x: 2449.1493370184653
+        y: 745.8795077255644
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-202
+            key: ''
+            type: text
+            value: '{{#1781105727514.body_json#}}'
+          type: json
+        headers: Authorization:Bearer app-ylwKDAGw9n1N3CVNtLOxHsiN
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 查询数据
+        type: http-request
+        url: http://nginx/v1/chat-messages
+        variables: []
+      height: 137
+      id: '1781082593528'
+      position:
+        x: 3321.289129884048
+        y: 778.4471752728291
+      positionAbsolute:
+        x: 3321.289129884048
+        y: 778.4471752728291
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\nFast / 网关 · 解析 chat-messages 响应并拆分 / 组装展示内容\n\n展示顺序（detail）：表格\
+          \ → 要点速览 → ECharts\n\"\"\"\nimport json\nimport re\n\nSUMMARY_MARKERS =\
+          \ (\"\U0001F4CA 要点速览\", \"▸ 简要分析\", \"\U0001F4A1 建议\")\nECHARTS_RE = re.compile(r\"\
+          ```echarts\\s*\\n([\\s\\S]*?)```\", re.IGNORECASE)\nTABLE_RE = re.compile(r\"\
+          (\\|[^\\n]+\\|\\s*\\n(?:\\|[^\\n]+\\|\\s*\\n?)+)\")\n\n\ndef normalize_answer(text:\
+          \ str) -> str:\n    t = (text or \"\").strip()\n    t = re.sub(r\"```\\\
+          s*\\|\", \"```\\n\\n|\", t)\n    return t\n\n\ndef extract_parts(answer:\
+          \ str) -> tuple[str, str, str]:\n    \"\"\"拆出 table / summary（含表前表后分析 +\
+          \ 要点速览）/ echarts。\"\"\"\n    text = normalize_answer(answer)\n    if not\
+          \ text:\n        return \"\", \"\", \"\"\n\n    echarts = \"\"\n    m =\
+          \ ECHARTS_RE.search(text)\n    if m:\n        echarts = f\"```echarts\\\
+          n{m.group(1).strip()}\\n```\"\n    rest = ECHARTS_RE.sub(\"\", text).strip()\n\
+          \n    marker_summary = \"\"\n    cut = len(rest)\n    for marker in SUMMARY_MARKERS:\n\
+          \        idx = rest.find(marker)\n        if idx != -1:\n            cut\
+          \ = min(cut, idx)\n            marker_summary = rest[idx:].strip()\n\n \
+          \   body = rest[:cut].strip() if cut < len(rest) else rest\n\n    table\
+          \ = \"\"\n    prose = \"\"\n    tm = TABLE_RE.search(body)\n    if tm:\n\
+          \        table = tm.group(1).strip()\n        before = body[: tm.start()].strip()\n\
+          \        after = body[tm.end() :].strip()\n        prose = \"\\n\\n\".join(p\
+          \ for p in (before, after) if p)\n    elif body:\n        # 无 markdown 管道表时，正文留给\
+          \ summary（如纯文字结论）\n        prose = body\n\n    summary = \"\\n\\n\".join(p\
+          \ for p in (prose, marker_summary) if p)\n\n    return table, summary, echarts\n\
+          \n\ndef assemble_display(table: str, summary: str, echarts: str) -> str:\n\
+          \    \"\"\"列表 → 要点速览 → ECHARTS\"\"\"\n    parts = [p for p in (table, summary,\
+          \ echarts) if p]\n    if parts:\n        return \"\\n\\n\".join(parts)\n\
+          \    return \"\"\n\n\ndef split_answer(answer: str) -> tuple[str, str]:\n\
+          \    \"\"\"summary=要点速览；detail=按展示顺序组装后的全文。\"\"\"\n    table, summary, echarts\
+          \ = extract_parts(answer)\n    display = assemble_display(table, summary,\
+          \ echarts)\n    if display:\n        return summary or \"查询完成，明细如下。\", display\n\
+          \    text = normalize_answer(answer)\n    if len(text) <= 300:\n       \
+          \ return text, text\n    return text[:300] + \"…\", text\n\n\ndef parse_sse(raw:\
+          \ str) -> tuple[str, str]:\n    text = raw or \"\"\n    chunks = []\n  \
+          \  final_answer = \"\"\n    conversation_id = \"\"\n\n    stripped = text.strip()\n\
+          \    if stripped.startswith(\"{\"):\n        try:\n            obj = json.loads(stripped)\n\
+          \            data = obj.get(\"data\") or obj\n            outputs = data.get(\"\
+          outputs\") or obj.get(\"outputs\") or {}\n            final_answer = (\n\
+          \                outputs.get(\"answer\")\n                or data.get(\"\
+          answer\")\n                or obj.get(\"answer\")\n                or \"\
+          \"\n            )\n            conversation_id = (\n                outputs.get(\"\
+          conversation_id\")\n                or data.get(\"conversation_id\")\n \
+          \               or obj.get(\"conversation_id\")\n                or \"\"\
+          \n            )\n            if final_answer:\n                return normalize_answer(final_answer),\
+          \ conversation_id\n        except json.JSONDecodeError:\n            pass\n\
+          \n    for line in text.splitlines():\n        line = line.strip()\n    \
+          \    if not line.startswith(\"data:\"):\n            continue\n        payload\
+          \ = line[5:].strip()\n        if not payload or payload == \"[DONE]\":\n\
+          \            continue\n        try:\n            obj = json.loads(payload)\n\
+          \        except json.JSONDecodeError:\n            continue\n\n        cid\
+          \ = obj.get(\"conversation_id\")\n        if cid:\n            conversation_id\
+          \ = cid\n        # workflow_finished 嵌套\n        data_top = obj.get(\"data\"\
+          ) or {}\n        if isinstance(data_top, dict):\n            cid2 = data_top.get(\"\
+          conversation_id\")\n            if cid2:\n                conversation_id\
+          \ = cid2\n\n        event = obj.get(\"event\")\n        if event == \"message\"\
+          :\n            part = obj.get(\"answer\") or \"\"\n            if part:\n\
+          \                chunks.append(part)\n        elif event == \"workflow_finished\"\
+          :\n            data = obj.get(\"data\") or {}\n            outputs = data.get(\"\
+          outputs\") or {}\n            final_answer = outputs.get(\"answer\") or\
+          \ final_answer\n            cid = obj.get(\"conversation_id\") or conversation_id\n\
+          \            if cid:\n                conversation_id = cid\n\n    answer\
+          \ = normalize_answer((final_answer or \"\".join(chunks)).strip())\n    if\
+          \ not answer:\n        answer = \"数据分析未返回结果，请稍后重试或联系管理员。\"\n    return answer,\
+          \ conversation_id or \"\"\n\n\ndef main(raw: str) -> dict:\n    answer,\
+          \ conversation_id = parse_sse(raw)\n    table, summary, echarts = extract_parts(answer)\n\
+          \    display = assemble_display(table, summary, echarts)\n    if not display:\n\
+          \        display = answer\n\n    return {\n        \"answer\": answer,\n\
+          \        \"summary\": summary,\n        \"detail\": display,\n        \"\
+          table\": table,\n        \"echarts\": echarts,\n        \"conversation_id\"\
+          : conversation_id,\n    }\n"
+        code_language: python3
+        outputs:
+          answer:
+            children: null
+            type: string
+          conversation_id:
+            children: null
+            type: string
+          detail:
+            children: null
+            type: string
+          echarts:
+            children: null
+            type: string
+          summary:
+            children: null
+            type: string
+          table:
+            children: null
+            type: string
+        selected: false
+        title: 解析查询数据
+        type: code
+        variables:
+        - value_selector:
+          - '1781082593528'
+          - body
+          value_type: string
+          variable: raw
+      height: 52
+      id: '1781096559566'
+      position:
+        x: 3719.880824246256
+        y: 778.4471752728291
+      positionAbsolute:
+        x: 3719.880824246256
+        y: 778.4471752728291
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781096559566'
+          - conversation_id
+          variable_selector:
+          - conversation
+          - data_analysis_conversation_id
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781096559566'
+          - summary
+          variable_selector:
+          - conversation
+          - last_query_summary
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781096559566'
+          - detail
+          variable_selector:
+          - conversation
+          - last_query_detail
+          write_mode: over-write
+        selected: false
+        title: 变量赋值
+        type: assigner
+        version: '2'
+      height: 136
+      id: '1781096760474'
+      position:
+        x: 4124.903936156133
+        y: 778.4471752728291
+      positionAbsolute:
+        x: 4124.903936156133
+        y: 778.4471752728291
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '
+
+          {{#conversation.last_query_detail#}}
+
+
+          '
+        selected: false
+        title: 查数回复
+        type: answer
+        variables: []
+      height: 104
+      id: '1781096844325'
+      position:
+        x: 4591.558513173712
+        y: 778.4471752728291
+      positionAbsolute:
+        x: 4591.558513173712
+        y: 778.4471752728291
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: Qwen3-4B-Instruct-2507-FP8
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - id: 60a78b84-adcc-4c98-8b74-2f88585ca49c
+          role: system
+          text: 回复用户关于PCB行业的问题，不知道的就回复不知道。
+        selected: false
+        title: 回复用户其它问题
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1781105477713'
+      position:
+        x: 2900.6238386622495
+        y: 932.9330510132926
+      positionAbsolute:
+        x: 2900.6238386622495
+        y: 932.9330510132926
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\n\"\"\"\nFast 路径 · HTTP 前组装 chat-messages 请求体\n\n节点：「组装Chat请求」Code（放在\
+          \ HTTP 之前）\n输入：\n  query          ← sys.query / 用户输入\n  conversation_id\
+          \ ← conversation.data_analysis_conversation_id\n输出：\n  body_json      ←\
+          \ 给 HTTP Body（整段 JSON 字符串）\n  has_conversation_id ← 是否带 id（调试用）\n\n规则：\n\
+          \  - 新问：conversation_id 为空 → Body **不含** conversation_id 字段\n  - 追问：conversation_id\
+          \ 非空 → Body **必须带** conversation_id\n  - user 固定 fast-path-user（首问/追问必须相同）\n\
+          \"\"\"\nimport json\n\n\ndef main(query: str, conversation_id: str = \"\"\
+          ) -> dict:\n    q = (query or \"\").strip()\n    if not q:\n        return\
+          \ {\n            \"body_json\": \"\",\n            \"has_conversation_id\"\
+          : \"false\",\n            \"error\": \"query 为空\",\n        }\n\n    payload\
+          \ = {\n        \"inputs\": {},\n        \"query\": q,\n        \"response_mode\"\
+          : \"streaming\",\n        \"user\": \"fast-path-user\",\n    }\n    cid\
+          \ = (conversation_id or \"\").strip()\n    if cid and cid not in (\"null\"\
+          , \"undefined\", \"{{conversation.data_analysis_conversation_id}}\"):\n\
+          \        payload[\"conversation_id\"] = cid\n\n    return {\n        \"\
+          body_json\": json.dumps(payload, ensure_ascii=False),\n        \"has_conversation_id\"\
+          : \"true\" if cid else \"false\",\n        \"error\": \"\",\n    }\n\n"
+        code_language: python3
+        outputs:
+          body_json:
+            children: null
+            type: string
+          error:
+            children: null
+            type: string
+          has_conversation_id:
+            children: null
+            type: string
+        selected: false
+        title: 获取请求body
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: query
+        - value_selector:
+          - conversation
+          - data_analysis_conversation_id
+          value_type: string
+          variable: conversation_id
+      height: 52
+      id: '1781105727514'
+      position:
+        x: 2900.6238386622495
+        y: 778.4471752728291
+      positionAbsolute:
+        x: 2900.6238386622495
+        y: 778.4471752728291
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\nDify Code 节点：登录路由（被动登录 · 单节点决策 + 可选直出凭据）。\n\n输入：\n  - query:\
+          \ string\n  - auth_token: string\n  - login_pending: string\n\n输出（**全部为\
+          \ string**，If-Else 用「等于」比较）：\n  - should_login: \"true\" | \"false\"\n \
+          \ - login_action: \"authenticate\" | \"prompt\" | \"skip\"\n  - username:\
+          \ string   authenticate 时可直绑 HTTP，空则再走 Extractor\n  - password: string\n\
+          \  - reason: string\n\"\"\"\n\n\ndef _norm_flag(value: str) -> bool:\n \
+          \   return str(value or \"\").strip().lower() in {\"true\", \"1\", \"yes\"\
+          , \"是\"}\n\n\ndef _result(\n    should: bool,\n    action: str,\n    reason:\
+          \ str,\n    username: str = \"\",\n    password: str = \"\",\n) -> dict:\n\
+          \    return {\n        \"should_login\": \"true\" if should else \"false\"\
+          ,\n        \"login_action\": action,\n        \"username\": username or\
+          \ \"\",\n        \"password\": password or \"\",\n        \"reason\": reason,\n\
+          \    }\n\n\ndef _looks_like_credential_pair(text: str) -> tuple[str, str]\
+          \ | None:\n    \"\"\"「zhangsan 123456」类：两段 token，无业务动词。\"\"\"\n    import\
+          \ re\n\n    parts = text.strip().split()\n    if len(parts) != 2:\n    \
+          \    return None\n    biz_markers = (\n        \"领\", \"查\", \"帮\", \"申请\"\
+          , \"统计\", \"多少\", \"物料\", \"油墨\", \"消耗\",\n        \"KG\", \"kg\", \"箱\"\
+          , \"张\", \"吨\", \"个\", \"覆铜\", \"明细\",\n    )\n    if any(m in text for\
+          \ m in biz_markers):\n        return None\n    user, pwd = parts[0], parts[1]\n\
+          \    if re.match(r\"^[a-zA-Z0-9_\\-]+$\", user) and pwd:\n        return\
+          \ user, pwd\n    return None\n\n\ndef _extract_credentials(text: str) ->\
+          \ tuple[str, str] | None:\n    import re\n\n    t = text.strip()\n    if\
+          \ not t:\n        return None\n\n    m = re.search(\n        r\"(?:工号|账号|用户名|账户)\\\
+          s*[：:]?\\s*(\\S+)\\s*(?:密码|口令)\\s*[：:]?\\s*(\\S+)\",\n        t,\n     \
+          \   re.I,\n    )\n    if m:\n        return m.group(1), m.group(2)\n\n \
+          \   m = re.search(\n        r\"(?:密码|口令)\\s*[：:]?\\s*(\\S+)\\s*(?:工号|账号|用户名)\\\
+          s*[：:]?\\s*(\\S+)\",\n        t,\n        re.I,\n    )\n    if m:\n    \
+          \    return m.group(2), m.group(1)\n\n    if t.lower().startswith(\"login\
+          \ \"):\n        parts = t.split()\n        if len(parts) >= 3:\n       \
+          \     return parts[1], parts[2]\n\n    if t.startswith(\"登录\"):\n      \
+          \  rest = t[2:].lstrip(\"：: \\t\")\n        parts = rest.split()\n     \
+          \   if len(parts) >= 2:\n            return parts[0], parts[1]\n\n    return\
+          \ _looks_like_credential_pair(t)\n\n\ndef _needs_erp_auth(text: str) ->\
+          \ bool:\n    t = text.strip()\n    if not t:\n        return False\n\n \
+          \   requisition_keywords = (\n        \"领料\", \"我要领\", \"要领料\", \"要料\",\
+          \ \"帮我领\", \"申请领\",\n        \"出库申请\", \"确认提交\", \"提交审批\", \"审批到哪\", \"\
+          我的领料\",\n        \"我的申请\", \"领用\", \"要申请\",\n    )\n    if any(k in t for\
+          \ k in requisition_keywords):\n        return True\n\n    if \"领\" in t\
+          \ and any(\n        x in t for x in (\"够的话\", \"够就\", \"先查\", \"再领\", \"\
+          再帮我领\", \"帮我申请\")\n    ):\n        return True\n\n    if \"领\" in t and\
+          \ any(u in t for u in (\"KG\", \"kg\", \"箱\", \"张\", \"吨\", \"个\")):\n \
+          \       return True\n\n    return False\n\n\ndef _is_login_keyword_only(text:\
+          \ str) -> bool:\n    t = text.strip()\n    if t in {\"登录\", \"登陆\"}:\n \
+          \       return True\n    if t.startswith(\"登录\") and _extract_credentials(t)\
+          \ is None:\n        rest = t[2:].lstrip(\"：: \\t\")\n        return not\
+          \ rest\n    return False\n\n\ndef main(query: str, auth_token: str = \"\"\
+          , login_pending: str = \"\") -> dict:\n    text = (query or \"\").strip()\n\
+          \n    if (auth_token or \"\").strip():\n        return _result(False, \"\
+          skip\", \"already_logged_in\")\n\n    creds = _extract_credentials(text)\n\
+          \    if creds:\n        return _result(\n            True, \"authenticate\"\
+          , \"explicit_credentials\", creds[0], creds[1]\n        )\n\n    if _is_login_keyword_only(text):\n\
+          \        return _result(True, \"prompt\", \"login_keyword_only\")\n\n  \
+          \  if _needs_erp_auth(text):\n        return _result(True, \"prompt\", \"\
+          need_erp_auth\")\n\n    if _norm_flag(login_pending):\n        pair = _looks_like_credential_pair(text)\n\
+          \        if pair:\n            return _result(\n                True, \"\
+          authenticate\", \"pending_two_tokens\", pair[0], pair[1]\n            )\n\
+          \n    return _result(False, \"skip\", \"normal_flow\")\n"
+        code_language: python3
+        outputs:
+          login_action:
+            children: null
+            type: string
+          password:
+            children: null
+            type: string
+          reason:
+            children: null
+            type: string
+          should_login:
+            children: null
+            type: string
+          username:
+            children: null
+            type: string
+        selected: false
+        title: 判断用户是否走登录流程
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: query
+        - value_selector:
+          - conversation
+          - auth_token
+          value_type: string
+          variable: auth_token
+        - value_selector:
+          - conversation
+          - login_pending
+          value_type: string
+          variable: login_pending
+      height: 52
+      id: '1781146251008'
+      position:
+        x: -64.89809363325094
+        y: 303
+      positionAbsolute:
+        x: -64.89809363325094
+        y: 303
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: aebebc9b-c547-4f3b-b3d1-009d743541e1
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781146251008'
+            - should_login
+          - comparison_operator: is
+            id: 18ed261b-1f33-4ded-9e02-22aee967d77e
+            value: authenticate
+            varType: string
+            variable_selector:
+            - '1781146251008'
+            - login_action
+          id: 'true'
+          logical_operator: and
+        - case_id: 312f8757-7ccd-457a-8391-6801f1a3a109
+          conditions:
+          - comparison_operator: contains
+            id: 1fa90820-5b0f-4d26-8f0d-a71ff24f6629
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781146251008'
+            - should_login
+          - comparison_operator: contains
+            id: 6b656ede-2493-4d8c-9cdf-6e0c6cbe8bda
+            value: prompt
+            varType: string
+            variable_selector:
+            - '1781146251008'
+            - login_action
+          id: 312f8757-7ccd-457a-8391-6801f1a3a109
+          logical_operator: and
+        selected: false
+        title: 条件分支 2
+        type: if-else
+      height: 224
+      id: '1781146531923'
+      position:
+        x: 440.34571914246953
+        y: 303
+      positionAbsolute:
+        x: 440.34571914246953
+        y: 303
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-157
+            key: ''
+            type: text
+            value: '{{#1781148949662.body_json#}}'
+          type: json
+        headers: 'Content-Type:application/json
+
+          ngrok-skip-browser-warning:true'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: HTTP 请求 2
+        type: http-request
+        url: https://a4d5-218-95-67-64.ngrok-free.app/api/auth/login
+        variables: []
+      height: 153
+      id: '1781148273413'
+      position:
+        x: 1499.3591909507177
+        y: -7.574995767480431
+      positionAbsolute:
+        x: 1499.3591909507177
+        y: -7.574995767480431
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\n\"\"\"\nDify Code 节点：组装 erp_login HTTP Body，避免 password 被 Dify 插值成\
+          \ JSON 数字。\n\n输入：\n  - username: string\n  - password: string  必须是字符串，如\
+          \ \"123456\"\n\n输出：\n  - body_json: string  可直接作为 HTTP Body（raw JSON）\n\"\
+          \"\"\n\n\ndef main(username: str, password: str) -> dict:\n    import json\n\
+          \n    body = {\n        \"username\": str(username or \"\").strip(),\n \
+          \       \"password\": str(password or \"\").strip(),\n    }\n    return\
+          \ {\"body_json\": json.dumps(body, ensure_ascii=False)}\n\n"
+        code_language: python3
+        outputs:
+          body_json:
+            children: null
+            type: string
+        selected: false
+        title: 生成请求body
+        type: code
+        variables:
+        - value_selector:
+          - '1781146251008'
+          - username
+          value_type: string
+          variable: username
+        - value_selector:
+          - '1781146251008'
+          - password
+          value_type: string
+          variable: password
+      height: 52
+      id: '1781148949662'
+      position:
+        x: 952.0522009699298
+        y: -7.574995767480431
+      positionAbsolute:
+        x: 952.0522009699298
+        y: -7.574995767480431
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\nDify Code 节点：解析 erp_login HTTP 响应。\n\n输出均为 string（login_ok\
+          \ 为 \"true\"/\"false\"，供 If-Else 等于 判断）。\n\"\"\"\n\n\ndef main(body: str\
+          \ | dict, status_code: int = 200) -> dict:\n    import json\n    from datetime\
+          \ import datetime, timedelta, timezone\n\n    def fail(msg: str) -> dict:\n\
+          \        return {\n            \"auth_token\": \"\",\n            \"token_expires_at\"\
+          : \"\",\n            \"user_profile\": {},\n            \"login_ok\": \"\
+          false\",\n            \"login_message\": msg,\n        }\n\n    if status_code\
+          \ and int(status_code) >= 400:\n        return fail(f\"登录失败（HTTP {status_code}），请检查工号密码。\"\
+          )\n\n    data = body\n    if isinstance(body, str):\n        body = body.strip()\n\
+          \        if not body:\n            return fail(\"登录失败：ERP 返回为空。\")\n   \
+          \     try:\n            data = json.loads(body)\n        except json.JSONDecodeError:\n\
+          \            return fail(\"登录失败：响应不是合法 JSON。\")\n\n    if not isinstance(data,\
+          \ dict):\n        return fail(\"登录失败：响应格式异常。\")\n\n    token = data.get(\"\
+          access_token\") or \"\"\n    user = data.get(\"user\") or {}\n    if not\
+          \ token or not user:\n        msg = data.get(\"message\") or data.get(\"\
+          detail\") or \"用户名或密码错误。\"\n        if isinstance(msg, dict):\n        \
+          \    msg = msg.get(\"message\") or str(msg)\n        return fail(str(msg))\n\
+          \n    expires_in = int(data.get(\"expires_in\") or 7200)\n    expires_at\
+          \ = (\n        datetime.now(timezone.utc) + timedelta(seconds=expires_in)\n\
+          \    ).isoformat()\n\n    name = user.get(\"name\") or user.get(\"username\"\
+          ) or \"\"\n    dept = user.get(\"dept_name\") or \"\"\n    login_message\
+          \ = (\n        f\"登录成功，{name}（{dept}）。\"\n        f\"您可以直接说：查库存、统计用量、或帮我领\
+          \ XX 物料。\"\n    )\n\n    return {\n        \"auth_token\": token,\n    \
+          \    \"token_expires_at\": expires_at,\n        \"user_profile\": user,\n\
+          \        \"login_ok\": \"true\",\n        \"login_message\": login_message,\n\
+          \    }\n\n"
+        code_language: python3
+        outputs:
+          auth_token:
+            children: null
+            type: string
+          login_message:
+            children: null
+            type: string
+          login_ok:
+            children: null
+            type: string
+          token_expires_at:
+            children: null
+            type: string
+          user_profile:
+            children: null
+            type: object
+        selected: false
+        title: 解析登录参数
+        type: code
+        variables:
+        - value_selector:
+          - '1781148273413'
+          - body
+          value_type: string
+          variable: body
+        - value_selector:
+          - '1781148273413'
+          - status_code
+          value_type: number
+          variable: status_code
+      height: 52
+      id: '1781149174521'
+      position:
+        x: 1995.728784318947
+        y: -7.574995767480431
+      positionAbsolute:
+        x: 1995.728784318947
+        y: -7.574995767480431
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781149174521'
+          - auth_token
+          variable_selector:
+          - conversation
+          - auth_token
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781149174521'
+          - token_expires_at
+          variable_selector:
+          - conversation
+          - token_expires_at
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781149174521'
+          - user_profile
+          variable_selector:
+          - conversation
+          - user_profile
+          write_mode: over-write
+        - input_type: variable
+          operation: clear
+          value: ''
+          variable_selector:
+          - conversation
+          - login_pending
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 2
+        type: assigner
+        version: '2'
+      height: 162
+      id: '1781149377042'
+      position:
+        x: 2449.1493370184653
+        y: -7.574995767480431
+      positionAbsolute:
+        x: 2449.1493370184653
+        y: -7.574995767480431
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1781149174521.login_message#}}'
+        selected: false
+        title: 直接回复 3
+        type: answer
+        variables: []
+      height: 103
+      id: '1781149532297'
+      position:
+        x: 2900.6238386622495
+        y: -7.574995767480431
+      positionAbsolute:
+        x: 2900.6238386622495
+        y: -7.574995767480431
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '办理领料需要先验证ERP身份，请直接回复工号和密码，例如：zhangsan 123456
+
+
+          数据统计类问题无需登录，您仍可随时问我「统计2025年覆铜板各月消耗」等。'
+        selected: false
+        title: 提示内容
+        type: answer
+        variables: []
+      height: 164
+      id: '1781156368219'
+      position:
+        x: 952.0522009699298
+        y: 588
+      positionAbsolute:
+        x: 952.0522009699298
+        y: 588
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\nDify Code 节点：领料 / 查单 / 混合类请求 → 进入 **领料子流程**（先 DATA Fast 读，再\
+          \ Agent 写）。\n\n**不是**「直进 Agent」。`use_agent` 为历史字段名，与 `use_requisition_flow`\
+          \ 同值。\n\n放在「登录路由」之后、「意图分类器」之前。\n纯查物料/库存（无领料意图）应输出 false，交给分类器 → DATA Fast。\n\
+          \n输入：\n  - query: string  sys.query\n\n输出（If-Else equals）：\n  - use_requisition_flow:\
+          \ \"true\" | \"false\"  （推荐 If 绑此字段）\n  - use_agent: 同上（兼容旧画布）\n  - reason:\
+          \ string\n\"\"\"\n\nimport re\n\n_GON = re.compile(r\"GON\\d+\", re.I)\n\
+          _DRAFT = re.compile(r\"DRAFT-\\d\", re.I)\n\n_REQUISITION_KEYWORDS = (\n\
+          \    \"领料\",\n    \"我要领\",\n    \"要领料\",\n    \"要料\",\n    \"帮我领\",\n  \
+          \  \"申请领\",\n    \"出库申请\",\n    \"确认提交\",\n    \"提交审批\",\n    \"审批到哪\",\n\
+          \    \"我的领料\",\n    \"我的申请\",\n    \"领用\",\n    \"要申请\",\n)\n\n_STATUS_KEYWORDS\
+          \ = (\n    \"领料单\",\n    \"出仓单\",\n    \"审批状态\",\n    \"到哪了\",\n    \"单号状态\"\
+          ,\n)\n\n_FLOW_KEYWORDS = (\n    \"确认提交\",\n    \"修改数量\",\n    \"修改数量为\"\
+          ,\n)\n\n_UNITS = (\"KG\", \"kg\", \"Kg\", \"箱\", \"张\", \"吨\", \"个\", \"\
+          卷\", \"桶\", \"包\")\n\n_MIXED_HINTS = (\"够的话\", \"够就\", \"先查\", \"再领\", \"\
+          再帮我领\", \"帮我申请\")\n\n# 用户选型后续回复：仅料号或「领 JS-NZ-006」\n_MATERIAL_CODE = re.compile(r\"\
+          \\b([A-Z]{2,}-[A-Z0-9-]+)\\b\", re.I)\n\n\ndef _out(use: bool, reason: str)\
+          \ -> dict:\n    v = \"true\" if use else \"false\"\n    return {\"use_requisition_flow\"\
+          : v, \"use_agent\": v, \"reason\": reason}\n\n\ndef _is_requisition(text:\
+          \ str) -> tuple[bool, str]:\n    if any(k in text for k in _REQUISITION_KEYWORDS):\n\
+          \        return True, \"requisition_keyword\"\n\n    if any(k in text for\
+          \ k in _FLOW_KEYWORDS):\n        return True, \"requisition_flow\"\n\n \
+          \   if \"领\" in text and any(h in text for h in _MIXED_HINTS):\n       \
+          \ return True, \"mixed_hint\"\n\n    if \"领\" in text and any(u in text\
+          \ for u in _UNITS):\n        return True, \"requisition_with_unit\"\n\n\
+          \    return False, \"\"\n\n\ndef main(query: str) -> dict:\n    t = (query\
+          \ or \"\").strip()\n    if not t:\n        return _out(False, \"empty\"\
+          )\n\n    if _GON.search(t):\n        return _out(True, \"gon_number\")\n\
+          \n    if _DRAFT.search(t):\n        return _out(True, \"draft_number\")\n\
+          \n    if any(k in t for k in _STATUS_KEYWORDS):\n        return _out(True,\
+          \ \"requisition_status_keyword\")\n\n    if \"状态\" in t and re.search(r\"\
+          查询\\s*[A-Z]{2,}\\d+\", t, re.I):\n        return _out(True, \"query_status_with_biz_no\"\
+          )\n\n    ok, why = _is_requisition(t)\n    if ok:\n        return _out(True,\
+          \ why)\n\n    if t in (\"取消\", \"算了\"):\n        return _out(True, \"requisition_cancel\"\
+          )\n\n    # 选型后用户只发料号 / 「领 JS-NZ-006」→ 仍进领料子流程\n    if _MATERIAL_CODE.search(t):\n\
+          \        if len(t) <= 48 and not any(k in t for k in (\"统计\", \"查询\", \"\
+          多少\", \"消耗\", \"明细\")):\n            return _out(True, \"material_code_pick\"\
+          )\n\n    return _out(False, \"use_classifier\")\n"
+        code_language: python3
+        outputs:
+          reason:
+            children: null
+            type: string
+          use_agent:
+            children: null
+            type: string
+          use_requisition_flow:
+            children: null
+            type: string
+        selected: false
+        title: 获取是否走领料流程
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: query
+      height: 52
+      id: '1781162580031'
+      position:
+        x: 952.0522009699298
+        y: 303
+      positionAbsolute:
+        x: 952.0522009699298
+        y: 303
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 04dbd3d7-08c6-48a2-9445-ec7c7668999a
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781162580031'
+            - use_requisition_flow
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 判断是否走领料流程
+        type: if-else
+      height: 124
+      id: '1781163010171'
+      position:
+        x: 1506.3849222005274
+        y: 303
+      positionAbsolute:
+        x: 1506.3849222005274
+        y: 303
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\n领料 Agent 前 · 判断本轮是否需 Fast HTTP 查库存。\n\n输入：\n  query       \
+          \       ← sys.query\n  reason             ← 领料路由 Code 的 reason（可选）\n  pick_waiting\
+          \       ← conversation.requisition_pick_waiting（可选）\n  pick_cache_json \
+          \   ← conversation.requisition_pick_cache_json（可选）\n\n输出（If-Else equals）：\n\
+          \  need_fast_inventory: \"true\" | \"false\"\n  use_pick_cache: \"true\"\
+          \ | \"false\"   # false 时直进 Agent（确认提交等）\n  skip_reason: string\n\"\"\"\n\
+          \nimport json\nimport re\n\n_SKIP_REASONS = frozenset(\n    {\n        \"\
+          gon_number\",\n        \"requisition_status_keyword\",\n        \"query_status_with_biz_no\"\
+          ,\n        \"draft_number\",\n    }\n)\n\n_FLOW_SKIP = (\n    \"确认提交\",\n\
+          \    \"提交审批\",\n    \"取消\",\n    \"算了\",\n)\n\n\ndef _is_modify_qty(text:\
+          \ str) -> bool:\n    return \"修改数量\" in text or bool(re.search(r\"改(?:成|为)\\\
+          s*[\\d.]+\\s*(?:KG|kg|箱|张|吨|个|卷|桶|包)?\", text))\n\n\n_CODE_IN_QUERY = re.compile(r\"\
+          \\b([A-Z]{2,}-[A-Z0-9-]+)\\b\", re.I)\n\n\ndef _code_in_pick_cache(code:\
+          \ str, pick_cache_json: str) -> bool:\n    if not code or not (pick_cache_json\
+          \ or \"\").strip():\n        return False\n    try:\n        rows = json.loads(pick_cache_json)\n\
+          \    except json.JSONDecodeError:\n        return False\n    if not isinstance(rows,\
+          \ list):\n        return False\n    upper = code.upper()\n    return any(str(r.get(\"\
+          code\", \"\")).strip().upper() == upper for r in rows if isinstance(r, dict))\n\
+          \n\ndef _out(need_fast: bool, use_cache: bool, reason: str) -> dict:\n \
+          \   return {\n        \"need_fast_inventory\": \"true\" if need_fast else\
+          \ \"false\",\n        \"use_pick_cache\": \"true\" if use_cache else \"\
+          false\",\n        \"skip_reason\": reason,\n    }\n\n\ndef main(\n    query:\
+          \ str,\n    reason: str = \"\",\n    pick_waiting: str = \"\",\n    pick_cache_json:\
+          \ str = \"\",\n) -> dict:\n    t = (query or \"\").strip()\n    r = (reason\
+          \ or \"\").strip()\n\n    if not t:\n        return _out(False, False, \"\
+          empty_query\")\n\n    if r in _SKIP_REASONS:\n        return _out(False,\
+          \ False, r)\n\n    if t in _FLOW_SKIP or any(k in t for k in (\"确认提交\",\
+          \ \"提交审批\")):\n        return _out(False, False, \"confirm_or_cancel\")\n\
+          \n    if _is_modify_qty(t):\n        return _out(False, False, \"modify_qty_only\"\
+          )\n\n    if re.search(r\"GON\\d+\", t, re.I):\n        return _out(False,\
+          \ False, \"gon_in_query\")\n\n    # 选型后续：料号在上一轮 list 中 → 走缓存，不 HTTP\n  \
+          \  if (pick_waiting or \"\").strip().lower() == \"true\":\n        m = _CODE_IN_QUERY.search(t)\n\
+          \        if m and _code_in_pick_cache(m.group(1), pick_cache_json):\n  \
+          \          return _out(False, True, \"pick_cache_hit\")\n\n    return _out(True,\
+          \ False, \"\")\n"
+        code_language: python3
+        outputs:
+          need_fast_inventory:
+            children: null
+            type: string
+          skip_reason:
+            children: null
+            type: string
+          use_pick_cache:
+            children: null
+            type: string
+        selected: false
+        title: 获取是否查库存
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: query
+        - value_selector:
+          - '1781162580031'
+          - reason
+          value_type: string
+          variable: reason
+        - value_selector:
+          - conversation
+          - requisition_pick_waiting
+          value_type: string
+          variable: pick_waiting
+        - value_selector:
+          - conversation
+          - requisition_pick_cache_json
+          value_type: string
+          variable: pick_cache_json
+      height: 52
+      id: '1781228840391'
+      position:
+        x: 1988.0810364681133
+        y: 307.25566912369646
+      positionAbsolute:
+        x: 1988.0810364681133
+        y: 307.25566912369646
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\n领料 Fast 路径 · 将用户领料原话转为 DATA Fast question。\n\n领料场景若名称模糊（如「阻焊油墨」），要求\
+          \ SQL 侧优先缩小范围，避免一次 50 行。\n\"\"\"\n\nimport re\n\n_QTY_IN_QUERY = re.compile(\n\
+          \    r\"([\\d,]+(?:\\.\\d+)?)\\s*(KG|kg|Kg|箱|张|吨|个|卷|桶|包)\",\n    re.I,\n\
+          )\n_CODE_IN_QUERY = re.compile(r\"\\b([A-Z]{2,}-[A-Z0-9-]+)\\b\", re.I)\n\
+          \n\ndef main(query: str, dept_name: str = \"\") -> dict:\n    raw = (query\
+          \ or \"\").strip()\n    if not raw:\n        return {\"inventory_query\"\
+          : \"\", \"error\": \"query 为空\"}\n\n    dept = (dept_name or \"\").strip()\n\
+          \    dept_hint = f\"（部门/事业部：{dept}）\" if dept else \"\"\n\n    code_m =\
+          \ _CODE_IN_QUERY.search(raw)\n    code_hint = f\"用户已指定料号 **{code_m.group(1).upper()}**，只查这一条。\"\
+          \ if code_m else \"\"\n\n    qty_m = _QTY_IN_QUERY.search(raw)\n    qty_hint\
+          \ = f\"用户申请数量约 **{qty_m.group(1)}{qty_m.group(2)}**。\" if qty_m else \"\"\
+          \n\n    inventory_query = (\n        f\"【领料查库存】用户原话：{raw}{dept_hint}。{qty_hint}{code_hint}\\\
+          n\"\n        f\"请查询 material_code、物料名称、当前可用库存数量、单位。\\n\"\n        f\"要求：\\\
+          n\"\n        f\"1. 若用户已给料号，只返回该料号一行；\\n\"\n        f\"2. 若名称模糊且匹配多条，**只返回可用库存>0**\
+          \ 的物料，按库存从高到低 **最多10行**；\\n\"\n        f\"3. 表格列名保持：material_code | 物料名称\
+          \ | 当前可用库存数量 | 单位；\\n\"\n        f\"4. 若仍无法唯一确定要领哪一种，在表格下用一句话说明「需用户指定料号」。\"\
+          \n    )\n    return {\"inventory_query\": inventory_query, \"error\": \"\
+          \"}\n"
+        code_language: python3
+        outputs:
+          error:
+            children: null
+            type: string
+          inventory_query:
+            children: null
+            type: string
+        selected: false
+        title: 组装查库存问题
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: query
+      height: 52
+      id: '1781229131287'
+      position:
+        x: 2900.6238386622495
+        y: 315.44348002336045
+      positionAbsolute:
+        x: 2900.6238386622495
+        y: 315.44348002336045
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\n\"\"\"\nFast 路径 · HTTP 前组装 chat-messages 请求体\n\n节点：「组装Chat请求」Code（放在\
+          \ HTTP 之前）\n输入：\n  query          ← sys.query / 用户输入\n  conversation_id\
+          \ ← conversation.data_analysis_conversation_id\n输出：\n  body_json      ←\
+          \ 给 HTTP Body（整段 JSON 字符串）\n  has_conversation_id ← 是否带 id（调试用）\n\n规则：\n\
+          \  - 新问：conversation_id 为空 → Body **不含** conversation_id 字段\n  - 追问：conversation_id\
+          \ 非空 → Body **必须带** conversation_id\n  - user 固定 fast-path-user（首问/追问必须相同）\n\
+          \"\"\"\nimport json\n\n\ndef main(query: str, conversation_id: str = \"\"\
+          ) -> dict:\n    q = (query or \"\").strip()\n    if not q:\n        return\
+          \ {\n            \"body_json\": \"\",\n            \"has_conversation_id\"\
+          : \"false\",\n            \"error\": \"query 为空\",\n        }\n\n    payload\
+          \ = {\n        \"inputs\": {},\n        \"query\": q,\n        \"response_mode\"\
+          : \"streaming\",\n        \"user\": \"fast-path-user\",\n    }\n    cid\
+          \ = (conversation_id or \"\").strip()\n    if cid and cid not in (\"null\"\
+          , \"undefined\", \"{{conversation.data_analysis_conversation_id}}\"):\n\
+          \        payload[\"conversation_id\"] = cid\n\n    return {\n        \"\
+          body_json\": json.dumps(payload, ensure_ascii=False),\n        \"has_conversation_id\"\
+          : \"true\" if cid else \"false\",\n        \"error\": \"\",\n    }\n\n"
+        code_language: python3
+        outputs:
+          body_json:
+            children: null
+            type: string
+          error:
+            children: null
+            type: string
+          has_conversation_id:
+            children: null
+            type: string
+        selected: false
+        title: 组装请求body
+        type: code
+        variables:
+        - value_selector:
+          - '1781229131287'
+          - inventory_query
+          value_type: string
+          variable: query
+      height: 52
+      id: '1781229323739'
+      position:
+        x: 3321.289129884048
+        y: 315.44348002336045
+      positionAbsolute:
+        x: 3321.289129884048
+        y: 315.44348002336045
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-202
+            key: ''
+            type: text
+            value: '{{#1781229323739.body_json#}}'
+          type: json
+        headers: Authorization:Bearer app-ylwKDAGw9n1N3CVNtLOxHsiN
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 查询物料库存数据
+        type: http-request
+        url: http://nginx/v1/chat-messages
+        variables: []
+      height: 137
+      id: '17812296495870'
+      position:
+        x: 3719.880824246256
+        y: 315.44348002336045
+      positionAbsolute:
+        x: 3719.880824246256
+        y: 315.44348002336045
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\nFast / 网关 · 解析 chat-messages 响应并拆分 / 组装展示内容\n\n展示顺序（detail）：表格\
+          \ → 要点速览 → ECharts\n\"\"\"\nimport json\nimport re\n\nSUMMARY_MARKERS =\
+          \ (\"\U0001F4CA 要点速览\", \"▸ 简要分析\", \"\U0001F4A1 建议\")\nECHARTS_RE = re.compile(r\"\
+          ```echarts\\s*\\n([\\s\\S]*?)```\", re.IGNORECASE)\nTABLE_RE = re.compile(r\"\
+          (\\|[^\\n]+\\|\\s*\\n(?:\\|[^\\n]+\\|\\s*\\n?)+)\")\n\n\ndef normalize_answer(text:\
+          \ str) -> str:\n    t = (text or \"\").strip()\n    t = re.sub(r\"```\\\
+          s*\\|\", \"```\\n\\n|\", t)\n    return t\n\n\ndef extract_parts(answer:\
+          \ str) -> tuple[str, str, str]:\n    \"\"\"拆出 table / summary（含表前表后分析 +\
+          \ 要点速览）/ echarts。\"\"\"\n    text = normalize_answer(answer)\n    if not\
+          \ text:\n        return \"\", \"\", \"\"\n\n    echarts = \"\"\n    m =\
+          \ ECHARTS_RE.search(text)\n    if m:\n        echarts = f\"```echarts\\\
+          n{m.group(1).strip()}\\n```\"\n    rest = ECHARTS_RE.sub(\"\", text).strip()\n\
+          \n    marker_summary = \"\"\n    cut = len(rest)\n    for marker in SUMMARY_MARKERS:\n\
+          \        idx = rest.find(marker)\n        if idx != -1:\n            cut\
+          \ = min(cut, idx)\n            marker_summary = rest[idx:].strip()\n\n \
+          \   body = rest[:cut].strip() if cut < len(rest) else rest\n\n    table\
+          \ = \"\"\n    prose = \"\"\n    tm = TABLE_RE.search(body)\n    if tm:\n\
+          \        table = tm.group(1).strip()\n        before = body[: tm.start()].strip()\n\
+          \        after = body[tm.end() :].strip()\n        prose = \"\\n\\n\".join(p\
+          \ for p in (before, after) if p)\n    elif body:\n        # 无 markdown 管道表时，正文留给\
+          \ summary（如纯文字结论）\n        prose = body\n\n    summary = \"\\n\\n\".join(p\
+          \ for p in (prose, marker_summary) if p)\n\n    return table, summary, echarts\n\
+          \n\ndef assemble_display(table: str, summary: str, echarts: str) -> str:\n\
+          \    \"\"\"列表 → 要点速览 → ECHARTS\"\"\"\n    parts = [p for p in (table, summary,\
+          \ echarts) if p]\n    if parts:\n        return \"\\n\\n\".join(parts)\n\
+          \    return \"\"\n\n\ndef split_answer(answer: str) -> tuple[str, str]:\n\
+          \    \"\"\"summary=要点速览；detail=按展示顺序组装后的全文。\"\"\"\n    table, summary, echarts\
+          \ = extract_parts(answer)\n    display = assemble_display(table, summary,\
+          \ echarts)\n    if display:\n        return summary or \"查询完成，明细如下。\", display\n\
+          \    text = normalize_answer(answer)\n    if len(text) <= 300:\n       \
+          \ return text, text\n    return text[:300] + \"…\", text\n\n\ndef parse_sse(raw:\
+          \ str) -> tuple[str, str]:\n    text = raw or \"\"\n    chunks = []\n  \
+          \  final_answer = \"\"\n    conversation_id = \"\"\n\n    stripped = text.strip()\n\
+          \    if stripped.startswith(\"{\"):\n        try:\n            obj = json.loads(stripped)\n\
+          \            data = obj.get(\"data\") or obj\n            outputs = data.get(\"\
+          outputs\") or obj.get(\"outputs\") or {}\n            final_answer = (\n\
+          \                outputs.get(\"answer\")\n                or data.get(\"\
+          answer\")\n                or obj.get(\"answer\")\n                or \"\
+          \"\n            )\n            conversation_id = (\n                outputs.get(\"\
+          conversation_id\")\n                or data.get(\"conversation_id\")\n \
+          \               or obj.get(\"conversation_id\")\n                or \"\"\
+          \n            )\n            if final_answer:\n                return normalize_answer(final_answer),\
+          \ conversation_id\n        except json.JSONDecodeError:\n            pass\n\
+          \n    for line in text.splitlines():\n        line = line.strip()\n    \
+          \    if not line.startswith(\"data:\"):\n            continue\n        payload\
+          \ = line[5:].strip()\n        if not payload or payload == \"[DONE]\":\n\
+          \            continue\n        try:\n            obj = json.loads(payload)\n\
+          \        except json.JSONDecodeError:\n            continue\n\n        cid\
+          \ = obj.get(\"conversation_id\")\n        if cid:\n            conversation_id\
+          \ = cid\n        # workflow_finished 嵌套\n        data_top = obj.get(\"data\"\
+          ) or {}\n        if isinstance(data_top, dict):\n            cid2 = data_top.get(\"\
+          conversation_id\")\n            if cid2:\n                conversation_id\
+          \ = cid2\n\n        event = obj.get(\"event\")\n        if event == \"message\"\
+          :\n            part = obj.get(\"answer\") or \"\"\n            if part:\n\
+          \                chunks.append(part)\n        elif event == \"workflow_finished\"\
+          :\n            data = obj.get(\"data\") or {}\n            outputs = data.get(\"\
+          outputs\") or {}\n            final_answer = outputs.get(\"answer\") or\
+          \ final_answer\n            cid = obj.get(\"conversation_id\") or conversation_id\n\
+          \            if cid:\n                conversation_id = cid\n\n    answer\
+          \ = normalize_answer((final_answer or \"\".join(chunks)).strip())\n    if\
+          \ not answer:\n        answer = \"数据分析未返回结果，请稍后重试或联系管理员。\"\n    return answer,\
+          \ conversation_id or \"\"\n\n\ndef main(raw: str) -> dict:\n    answer,\
+          \ conversation_id = parse_sse(raw)\n    table, summary, echarts = extract_parts(answer)\n\
+          \    display = assemble_display(table, summary, echarts)\n    if not display:\n\
+          \        display = answer\n\n    return {\n        \"answer\": answer,\n\
+          \        \"summary\": summary,\n        \"detail\": display,\n        \"\
+          table\": table,\n        \"echarts\": echarts,\n        \"conversation_id\"\
+          : conversation_id,\n    }\n"
+        code_language: python3
+        outputs:
+          answer:
+            children: null
+            type: string
+          conversation_id:
+            children: null
+            type: string
+          detail:
+            children: null
+            type: string
+          echarts:
+            children: null
+            type: string
+          summary:
+            children: null
+            type: string
+          table:
+            children: null
+            type: string
+        selected: false
+        title: 解析物料数据
+        type: code
+        variables:
+        - value_selector:
+          - '17812296495870'
+          - body
+          value_type: string
+          variable: raw
+      height: 52
+      id: '17812297751920'
+      position:
+        x: 4124.903936156133
+        y: 315.44348002336045
+      positionAbsolute:
+        x: 4124.903936156133
+        y: 315.44348002336045
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 1ede9dc7-6c71-404f-8955-355d6f827610
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781228840391'
+            - need_fast_inventory
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支 4
+        type: if-else
+      height: 124
+      id: '1781231050993'
+      position:
+        x: 2449.1493370184653
+        y: 307.25566912369646
+      positionAbsolute:
+        x: 2449.1493370184653
+        y: 307.25566912369646
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\n领料 Fast · 解析 DATA Fast 表格：唯一物料 vs 需用户选型。\n\npick_required=true\
+          \ 时 **不产出**有效 material_code；画布走选型 Answer，**不进 Agent**。\nextract_ok=true\
+          \ 时料号唯一；画布 Assigner → Agent。\n\n输入：detail, user_query\n输出：material_code,\
+          \ material_name, available_qty, unit, extract_ok,\n      pick_required,\
+          \ pick_list, match_count\n\"\"\"\n\nfrom __future__ import annotations\n\
+          \nimport json\nimport re\nfrom typing import NamedTuple\n\n_CODE_IN_QUERY\
+          \ = re.compile(r\"\\b([A-Z]{2,}-[A-Z0-9-]+)\\b\", re.I)\n_QTY_IN_QUERY =\
+          \ re.compile(\n    r\"([\\d,]+(?:\\.\\d+)?)\\s*(KG|kg|Kg|箱|张|吨|个|卷|桶|包)\"\
+          ,\n    re.I,\n)\n_TABLE_ROW = re.compile(\n    r\"^\\|\\s*([A-Z0-9-]+)\\\
+          s*\\|\\s*([^|]+?)\\s*\\|\\s*([\\d,]+(?:\\.\\d+)?)\\s*\\|\\s*([^|]+?)\\s*\\\
+          |\",\n    re.I | re.M,\n)\n\n\nclass MaterialRow(NamedTuple):\n    code:\
+          \ str\n    name: str\n    qty: float\n    unit: str\n\n\ndef _norm_qty(s:\
+          \ str) -> float:\n    return float(str(s or \"\").replace(\",\", \"\").strip()\
+          \ or 0)\n\n\ndef _parse_requested(user_query: str, fallback_query: str =\
+          \ \"\") -> tuple[float, str]:\n    for src in (user_query, fallback_query):\n\
+          \        m = _QTY_IN_QUERY.search(src or \"\")\n        if m:\n        \
+          \    unit = (m.group(2) or \"KG\").strip()\n            return _norm_qty(m.group(1)),\
+          \ unit.upper() if unit.upper() == \"KG\" else unit\n    return 0.0, \"KG\"\
+          \n\n\ndef _parse_code_in_query(user_query: str) -> str:\n    m = _CODE_IN_QUERY.search(user_query\
+          \ or \"\")\n    return m.group(1).upper() if m else \"\"\n\n\ndef _parse_table(text:\
+          \ str) -> list[MaterialRow]:\n    rows: list[MaterialRow] = []\n    for\
+          \ m in _TABLE_ROW.finditer(text):\n        code = m.group(1).strip().upper()\n\
+          \        if code.upper() in (\"MATERIAL_CODE\", \"料号\", \"---\"):\n    \
+          \        continue\n        if set(code) <= {\"-\", \" \"}:\n           \
+          \ continue\n        name = m.group(2).strip()\n        qty = _norm_qty(m.group(3))\n\
+          \        unit = m.group(4).strip()\n        rows.append(MaterialRow(code=code,\
+          \ name=name, qty=qty, unit=unit))\n    return rows\n\n\ndef _pick_list_markdown(rows:\
+          \ list[MaterialRow], limit: int = 10) -> str:\n    top = rows[:limit]\n\
+          \    lines = [\n        \"### 请选择要领的料号\",\n        \"\",\n        \"| 料号\
+          \ | 物料名称 | 可用库存 | 单位 |\",\n        \"|------|----------|----------|------|\"\
+          ,\n    ]\n    for r in top:\n        lines.append(f\"| {r.code} | {r.name}\
+          \ | {r.qty:g} | {r.unit} |\")\n    lines.extend(\n        [\n          \
+          \  \"\",\n            \"请直接回复 **料号**（例如 `JS-NZ-006`），或说「领 JS-NZ-006 10KG」。\"\
+          ,\n        ]\n    )\n    return \"\\n\".join(lines)\n\n\ndef _pick_cache_json(rows:\
+          \ list[MaterialRow]) -> str:\n    payload = [\n        {\"code\": r.code,\
+          \ \"name\": r.name, \"qty\": r.qty, \"unit\": r.unit}\n        for r in\
+          \ rows\n    ]\n    return json.dumps(payload, ensure_ascii=False)\n\n\n\
+          def _result(\n    *,\n    code: str = \"\",\n    name: str = \"\",\n   \
+          \ qty: str = \"\",\n    unit: str = \"\",\n    ok: bool = False,\n    pick:\
+          \ bool = False,\n    pick_list: str = \"\",\n    match_count: int = 0,\n\
+          \    pick_cache_json: str = \"\",\n) -> dict:\n    return {\n        \"\
+          material_code\": code,\n        \"material_name\": name,\n        \"available_qty\"\
+          : qty,\n        \"unit\": unit,\n        \"extract_ok\": \"true\" if ok\
+          \ else \"false\",\n        \"pick_required\": \"true\" if pick else \"false\"\
+          ,\n        \"pick_list\": pick_list,\n        \"match_count\": str(match_count),\n\
+          \        \"pick_cache_json\": pick_cache_json,\n    }\n\n\ndef main(detail:\
+          \ str, user_query: str = \"\", pending_intent_query: str = \"\") -> dict:\n\
+          \    text = (detail or \"\").strip()\n    if not text:\n        return _result()\n\
+          \n    intent = (pending_intent_query or \"\").strip()\n    rows = _parse_table(text)\n\
+          \    if not rows:\n        return _result(pick_list=\"未能解析物料表格，请补充更具体的物料名称或料号。\"\
+          )\n\n    req_qty, req_unit = _parse_requested(user_query, intent)\n    explicit\
+          \ = _parse_code_in_query(user_query)\n    if explicit:\n        for r in\
+          \ rows:\n            if r.code == explicit:\n                return _result(\n\
+          \                    code=r.code,\n                    name=r.name,\n  \
+          \                  qty=str(r.qty).rstrip(\"0\").rstrip(\".\") if r.qty %\
+          \ 1 else str(int(r.qty)),\n                    unit=r.unit or req_unit,\n\
+          \                    ok=True,\n                    match_count=len(rows),\n\
+          \                )\n\n    in_stock = [r for r in rows if r.qty > 0]\n  \
+          \  if not in_stock:\n        return _result(\n            pick=True,\n \
+          \           pick_list=\"匹配到的物料 **当前均无可用库存**，请更换物料或联系仓库。\",\n           \
+          \ match_count=len(rows),\n        )\n\n    if len(in_stock) == 1:\n    \
+          \    r = in_stock[0]\n        q = str(r.qty).rstrip(\"0\").rstrip(\".\"\
+          ) if r.qty % 1 else str(int(r.qty))\n        return _result(\n         \
+          \   code=r.code,\n            name=r.name,\n            qty=q,\n       \
+          \     unit=r.unit or req_unit,\n            ok=True,\n            match_count=len(rows),\n\
+          \        )\n\n    # 多条有库存：仅当「够领」的唯一一条时自动选中\n    if req_qty > 0:\n      \
+          \  enough = [r for r in in_stock if r.qty >= req_qty]\n        if len(enough)\
+          \ == 1:\n            r = enough[0]\n            q = str(r.qty).rstrip(\"\
+          0\").rstrip(\".\") if r.qty % 1 else str(int(r.qty))\n            return\
+          \ _result(\n                code=r.code,\n                name=r.name,\n\
+          \                qty=q,\n                unit=r.unit or req_unit,\n    \
+          \            ok=True,\n                match_count=len(rows),\n        \
+          \    )\n\n    ranked = sorted(in_stock, key=lambda x: x.qty, reverse=True)\n\
+          \    return _result(\n        pick=True,\n        pick_list=_pick_list_markdown(ranked),\n\
+          \        match_count=len(rows),\n        pick_cache_json=_pick_cache_json(ranked),\n\
+          \    )\n"
+        code_language: python3
+        outputs:
+          available_qty:
+            children: null
+            type: string
+          extract_ok:
+            children: null
+            type: string
+          match_count:
+            children: null
+            type: string
+          material_code:
+            children: null
+            type: string
+          material_name:
+            children: null
+            type: string
+          pick_cache_json:
+            children: null
+            type: string
+          pick_list:
+            children: null
+            type: string
+          pick_required:
+            children: null
+            type: string
+          unit:
+            children: null
+            type: string
+        selected: false
+        title: 提取物料信息
+        type: code
+        variables:
+        - value_selector:
+          - '17812297751920'
+          - detail
+          value_type: string
+          variable: detail
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: user_query
+        - value_selector:
+          - conversation
+          - requisition_intent_query
+          value_type: string
+          variable: pending_intent_query
+      height: 52
+      id: '1781232049095'
+      position:
+        x: 4591.558513173712
+        y: 315.44348002336045
+      positionAbsolute:
+        x: 4591.558513173712
+        y: 315.44348002336045
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781232049095'
+          - material_code
+          variable_selector:
+          - conversation
+          - requisition_material_code
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781232049095'
+          - material_name
+          variable_selector:
+          - conversation
+          - requisition_material_name
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781232049095'
+          - unit
+          variable_selector:
+          - conversation
+          - requisition_inventory_unit
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781232049095'
+          - available_qty
+          variable_selector:
+          - conversation
+          - requisition_available_qty
+          write_mode: over-write
+        - input_type: constant
+          operation: set
+          value: 'false'
+          variable_selector:
+          - conversation
+          - requisition_pick_waiting
+          write_mode: over-write
+        - input_type: constant
+          operation: set
+          value: 'false'
+          variable_selector:
+          - conversation
+          - requisition_pick_required
+          write_mode: over-write
+        - input_type: constant
+          operation: set
+          value: '""'
+          variable_selector:
+          - conversation
+          - requisition_pick_cache_json
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 3
+        type: assigner
+        version: '2'
+      height: 240
+      id: '1781232690058'
+      position:
+        x: 5411.764069124046
+        y: 449.3875596235682
+      positionAbsolute:
+        x: 5411.764069124046
+        y: 449.3875596235682
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 53bc0155-6aa8-4369-83cf-16709b6df760
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781232049095'
+            - pick_required
+          id: 'true'
+          logical_operator: and
+        - case_id: 10e8f769-74ff-488a-b709-37601b6c0c59
+          conditions:
+          - comparison_operator: is
+            id: 5639e17d-a6d3-4826-bc81-ba6633e68ad9
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781232049095'
+            - extract_ok
+          id: 10e8f769-74ff-488a-b709-37601b6c0c59
+          logical_operator: and
+        selected: false
+        title: 条件分支 5
+        type: if-else
+      height: 172
+      id: '1781233246378'
+      position:
+        x: 5045.132615177853
+        y: 315.44348002336045
+      positionAbsolute:
+        x: 5045.132615177853
+        y: 315.44348002336045
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 未能识别物料，请补充物料号
+        selected: false
+        title: 直接回复 6
+        type: answer
+        variables: []
+      height: 100
+      id: '1781233339981'
+      position:
+        x: 5411.764069124046
+        y: 283.0110417181118
+      positionAbsolute:
+        x: 5411.764069124046
+        y: 283.0110417181118
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781232049095'
+          - pick_list
+          variable_selector:
+          - conversation
+          - requisition_pick_list
+          write_mode: over-write
+        - input_type: constant
+          operation: set
+          value: 'true'
+          variable_selector:
+          - conversation
+          - requisition_pick_required
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781232049095'
+          - match_count
+          variable_selector:
+          - conversation
+          - requisition_match_count
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781252696907'
+          - requisition_intent_query
+          variable_selector:
+          - conversation
+          - requisition_intent_query
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781252696907'
+          - requisition_pick_waiting
+          variable_selector:
+          - conversation
+          - requisition_pick_waiting
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781232049095'
+          - pick_cache_json
+          variable_selector:
+          - conversation
+          - requisition_pick_cache_json
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 4
+        type: assigner
+        version: '2'
+      height: 214
+      id: '1781233415082'
+      position:
+        x: 5790.77138842646
+        y: 135.68135493582304
+      positionAbsolute:
+        x: 5790.77138842646
+        y: 135.68135493582304
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1781232049095.pick_list#}}'
+        selected: false
+        title: 直接回复 7
+        type: answer
+        variables: []
+      height: 103
+      id: '1781233481846'
+      position:
+        x: 6092.77138842646
+        y: 135.68135493582304
+      positionAbsolute:
+        x: 6092.77138842646
+        y: 135.68135493582304
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        agent_parameters:
+          instruction:
+            type: constant
+            value: "# 主控 Agent 提示词 · 阶段 5 领料版（DATA Fast 读 · Agent 只写）\n\n\n> **适用**：**仅当**画布\
+              \ `extract_ok=true`（料号已唯一）时才会进入本 Agent。  \n> **多条物料选型**由画布 **选型 Answer**\
+              \ 处理，**不会**进入本节点。  \n> **架构**：[22-库存与领料数据源定稿.md](../docs/22-库存与领料数据源定稿.md)\n\
+              \n\n---\n\n\n## 当前会话\n\n\n- 用户：{{#conversation.user_profile.name#}}（{{#conversation.user_profile.dept_name#}}）\n\
+              - ERP Token：{{#conversation.auth_token#}}\n- draft_id：{{#conversation.requisition_draft_id#}}\n\
+              \n\n**领料原话（含数量，选型后续用）**：{{#conversation.requisition_intent_query#}}\
+              \  \n若本轮用户只说料号、未写数量，**申请数量从「领料原话」解析**，勿默认 1。（空=尚未建草稿）\n\n\n**画布 DATA\
+              \ Fast 已确定唯一物料：**\n\n\n| 字段 | 值 |\n|------|-----|\n| 料号 | {{#conversation.requisition_material_code#}}\
+              \ |\n| 物料名称 | {{#conversation.requisition_material_name#}} |\n| 可用库存\
+              \ | {{#conversation.requisition_available_qty#}} {{#conversation.requisition_inventory_unit#}}\
+              \ |\n\n\n---\n\n\n## 角色\n\n\n**只负责写 ERP 工单**。登录由画布处理，**禁止** `erp_login`。\n\
+              \n\n**只挂 3 个 Tool**：`erp_save_draft` / `erp_submit_requisition` / `erp_get_requisition`\n\
+              \n\n**禁止**任何读类 Tool（`query_material_data` / `erp_search_material` /\
+              \ `erp_check_inventory`）。\n\n\n`save_draft` 的 `material_code`、`unit`\
+              \ **必须**用上面会话变量；`quantity` **来自用户原话**。禁止编造料号。\n\n\n---\n\n\n## erp_*\
+              \ 参数（每条 Header 必填）\n\n\n| 参数名 | 位置 | 值 |\n|--------|--------|-----|\n\
+              | `Authorization` | Header | `Bearer {{#conversation.auth_token#}}`\
+              \ |\n| `ngrok-skip-browser-warning` | Header | `true` |\n\n\n401 →「登录已过期，请重新发送工号和密码」。\n\
+              \n\n### erp_save_draft\n\n\n| 参数 | 值 |\n|------|-----|\n| items | material_code\
+              \ / quantity / unit 见上 |\n| purpose | `生产领用` |\n| draft_id | 改数量时必填\
+              \ |\n\n\n### erp_submit_requisition\n\n\n| 参数 | 值 |\n|------|-----|\n\
+              | draft_id | save_draft 返回 |\n| idempotency_key | UUID |\n\n\n### erp_get_requisition\n\
+              \n\n| 参数 | 值 |\n|------|-----|\n| requisition_no | GON 单号（Path） |\n\n\
+              \n---\n\n\n## 铁律\n\n\n1. 料号/库存 = 会话变量，禁止第二数据源。\n2. 出卡片前必须 `save_draft`\
+              \ 成功。\n3. 禁止擅自改数量；库存不足只提示改数/取消。\n4. 「确认提交」→ 仅 `submit` → GON。\n5. draft\
+              \ 过期：同轮 save_draft → submit → 直接给单号。\n6. Final Answer 禁止 Thought、Tool\
+              \ 名、过程说明。\n\n\n---\n\n\n## 领料流程\n\n\n**料号已唯一**（本轮已进入 Agent）\n\n\n1.\
+              \ `erp_save_draft`\n2. Final Answer **仅**确认卡片\n\n\n**改数量** → `save_draft`（带\
+              \ draft_id）→ 新卡片\n\n\n**确认提交** → `submit` → GON（本轮通常 `need_fast_inventory=false`，直进\
+              \ Agent）\n\n\n**取消** → 不调 submit\n\n\n**查 GON** → `erp_get_requisition`\n\
+              \n\n---\n\n\n## 确认卡片模板\n\n\n```markdown\n### 领料申请确认\n\n\n| 项目 | 内容 |\n\
+              |------|------|\n| 申请部门 | {dept_name} |\n| 物料 | {material_name}（{material_code}）\
+              \ |\n| 申请数量 | {quantity} {unit} |\n| 当前可用库存 | {requisition_available_qty}\
+              \ {unit} |\n| 用途 | 生产领用 |\n\n\n请回复 **「确认提交」**；修改请说 **「修改数量为 X」**；取消请说\
+              \ **「取消」**。\n```\n\n\n库存不足：**当前可用库存不足（申请 X，可用 Y），暂无法提交。请回复「修改数量为 X」或「取消」。**\n\
+              \n\n---\n\n\n## Final Answer\n\n\n- 待确认：整段 = 确认卡片，零前言。\n- 已提交：单号 + 状态。\n"
+          maximum_iterations:
+            type: constant
+            value: 15
+          model:
+            type: constant
+            value:
+              completion_params: {}
+              mode: chat
+              model: Qwen3-4B-Instruct-2507-FP8
+              model_type: llm
+              provider: langgenius/openai_api_compatible/openai_api_compatible
+              type: model-selector
+          query:
+            type: constant
+            value: '{{#sys.query#}}'
+          tools:
+            type: constant
+            value:
+            - enabled: true
+              extra:
+                description: '创建或更新领料草稿，不提交审批。用户未确认前禁止调用 submit。
+
+                  '
+              parameters:
+                Authorization:
+                  auto: 1
+                  value: null
+                dept_id:
+                  auto: 1
+                  value: null
+                draft_id:
+                  auto: 1
+                  value: null
+                items:
+                  auto: 1
+                  value: null
+                ngrok-skip-browser-warning:
+                  auto: 1
+                  value: null
+                purpose:
+                  auto: 1
+                  value: null
+                remark:
+                  auto: 1
+                  value: null
+              provider_name: 47b09768-1602-4cb9-9463-ae093b05013c
+              provider_show_name: 物料申领工具
+              settings: {}
+              tool_description: '创建或更新领料草稿，不提交审批。用户未确认前禁止调用 submit。
+
+                '
+              tool_label: erp_save_draft
+              tool_name: erp_save_draft
+              type: api
+            - enabled: true
+              extra:
+                description: '仅当用户明确说「确认提交」后调用。
+
+                  必须先有 erp_save_draft 返回的 draft_id。
+
+                  每次提交尝试使用新的 idempotency_key（UUID）；用户重复说「确认提交」且同一 draft 时可复用同一 key
+                  实现幂等。
+
+                  '
+              parameters:
+                Authorization:
+                  auto: 1
+                  value: null
+                draft_id:
+                  auto: 1
+                  value: null
+                idempotency_key:
+                  auto: 1
+                  value: null
+                ngrok-skip-browser-warning:
+                  auto: 1
+                  value: null
+              provider_name: 47b09768-1602-4cb9-9463-ae093b05013c
+              provider_show_name: 物料申领工具
+              settings: {}
+              tool_description: '仅当用户明确说「确认提交」后调用。
+
+                必须先有 erp_save_draft 返回的 draft_id。
+
+                每次提交尝试使用新的 idempotency_key（UUID）；用户重复说「确认提交」且同一 draft 时可复用同一 key 实现幂等。
+
+                '
+              tool_label: erp_submit_requisition
+              tool_name: erp_submit_requisition
+              type: api
+            - enabled: true
+              extra:
+                description: 按 GON 单号查审批状态与明细。
+              parameters:
+                Authorization:
+                  auto: 1
+                  value: null
+                ngrok-skip-browser-warning:
+                  auto: 1
+                  value: null
+                requisition_no:
+                  auto: 1
+                  value: null
+              provider_name: 47b09768-1602-4cb9-9463-ae093b05013c
+              provider_show_name: 物料申领工具
+              settings: {}
+              tool_description: 按 GON 单号查审批状态与明细。
+              tool_label: erp_get_requisition
+              tool_name: erp_get_requisition
+              type: api
+        agent_strategy_label: ReAct
+        agent_strategy_name: ReAct
+        agent_strategy_provider_name: langgenius/agent/agent
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}'
+          window:
+            enabled: true
+            size: 60
+        meta:
+          minimum_dify_version: 1.7.0
+          version: 0.0.2
+        output_schema: {}
+        plugin_unique_identifier: langgenius/agent:0.0.39@ceea6a76b3a495de2df2a55bcea82e903d49b06f4d8e1463c2aa085657f27164
+        selected: false
+        title: Agent (1)
+        tool_node_version: '2'
+        type: agent
+      height: 188
+      id: '17812520992760'
+      position:
+        x: 5790.77138842646
+        y: 470.4523345574122
+      positionAbsolute:
+        x: 5790.77138842646
+        y: 470.4523345574122
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#17812520992760.text#}}'
+        selected: false
+        title: 直接回复 8
+        type: answer
+        variables: []
+      height: 103
+      id: '1781252141636'
+      position:
+        x: 6092.77138842646
+        y: 470.4523345574122
+      positionAbsolute:
+        x: 6092.77138842646
+        y: 470.4523345574122
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\n\"\"\"\n选型轮 · 保存用户原始领料意图，供下一轮只回复料号时续流程。\n\n接在 pick_required=true\
+          \ 分支的 Assigner 前（或与 Assigner 同轮写入）。\n\n输入：\n  user_query ← sys.query（如「帮我领\
+          \ 10KG 阻焊油墨」）\n输出：\n  requisition_intent_query  原话\n  requisition_pick_waiting\
+          \  \"true\"\n\"\"\"\n\n\ndef main(user_query: str) -> dict:\n    q = (user_query\
+          \ or \"\").strip()\n    return {\n        \"requisition_intent_query\":\
+          \ q,\n        \"requisition_pick_waiting\": \"true\" if q else \"false\"\
+          ,\n    }\n\n"
+        code_language: python3
+        outputs:
+          requisition_intent_query:
+            children: null
+            type: string
+          requisition_pick_waiting:
+            children: null
+            type: string
+        selected: false
+        title: 保存领料意图
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: user_query
+      height: 52
+      id: '1781252696907'
+      position:
+        x: 5411.764069124046
+        y: 135.68135493582304
+      positionAbsolute:
+        x: 5411.764069124046
+        y: 135.68135493582304
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: ac5c4263-20bf-4168-833d-0fe80c6deab3
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781228840391'
+            - use_pick_cache
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支 6
+        type: if-else
+      height: 124
+      id: '1781256072178'
+      position:
+        x: 2900.6238386622495
+        y: 480.139221188085
+      positionAbsolute:
+        x: 2900.6238386622495
+        y: 480.139221188085
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "\"\"\"\n选型续单 · 从上一轮 pick_cache_json 取物料，跳过 Fast HTTP。\n\n接在 need_fast=false\
+          \ 且 use_pick_cache=true 分支。\n\n输入：\n  user_query           ← sys.query（如\
+          \ JS-NZ-117）\n  pick_cache_json      ← conversation.requisition_pick_cache_json\n\
+          \  pending_intent_query ← conversation.requisition_intent_query\n\n输出：与\
+          \ extract_requisition_material_from_detail 相同字段。\n\"\"\"\n\nfrom __future__\
+          \ import annotations\n\nimport json\nimport re\n\n_CODE_IN_QUERY = re.compile(r\"\
+          \\b([A-Z]{2,}-[A-Z0-9-]+)\\b\", re.I)\n\n\ndef _result(\n    *,\n    code:\
+          \ str = \"\",\n    name: str = \"\",\n    qty: str = \"\",\n    unit: str\
+          \ = \"\",\n    ok: bool = False,\n    pick_list: str = \"\",\n) -> dict:\n\
+          \    return {\n        \"material_code\": code,\n        \"material_name\"\
+          : name,\n        \"available_qty\": qty,\n        \"unit\": unit,\n    \
+          \    \"extract_ok\": \"true\" if ok else \"false\",\n        \"pick_required\"\
+          : \"false\",\n        \"pick_list\": pick_list,\n        \"match_count\"\
+          : \"0\",\n    }\n\n\ndef _fmt_qty(n: float) -> str:\n    return str(n).rstrip(\"\
+          0\").rstrip(\".\") if n % 1 else str(int(n))\n\n\ndef main(\n    user_query:\
+          \ str,\n    pick_cache_json: str = \"\",\n    pending_intent_query: str\
+          \ = \"\",\n) -> dict:\n    code = \"\"\n    m = _CODE_IN_QUERY.search(user_query\
+          \ or \"\")\n    if m:\n        code = m.group(1).upper()\n\n    if not code:\n\
+          \        return _result(pick_list=\"未能识别料号，请直接回复料号，如 JS-NZ-006。\")\n\n \
+          \   raw = (pick_cache_json or \"\").strip()\n    if not raw:\n        return\
+          \ _result(\n            pick_list=f\"选型缓存为空，无法匹配 {code}，将需重新查库存。\"\n   \
+          \     )\n\n    try:\n        rows = json.loads(raw)\n    except json.JSONDecodeError:\n\
+          \        return _result(pick_list=\"选型缓存格式异常，请重新发起领料。\")\n\n    if not isinstance(rows,\
+          \ list):\n        return _result(pick_list=\"选型缓存无效，请重新发起领料。\")\n\n    for\
+          \ row in rows:\n        if not isinstance(row, dict):\n            continue\n\
+          \        row_code = str(row.get(\"code\", \"\")).strip().upper()\n     \
+          \   if row_code != code:\n            continue\n        qty_val = float(row.get(\"\
+          qty\", 0) or 0)\n        unit = str(row.get(\"unit\", \"KG\") or \"KG\"\
+          ).strip()\n        name = str(row.get(\"name\", \"\") or row_code).strip()\n\
+          \        return _result(\n            code=row_code,\n            name=name,\n\
+          \            qty=_fmt_qty(qty_val),\n            unit=unit,\n          \
+          \  ok=True,\n        )\n\n    intent = (pending_intent_query or \"\").strip()\n\
+          \    hint = f\"（原申请：{intent}）\" if intent else \"\"\n    return _result(\n\
+          \        pick_list=f\"料号 **{code}** 不在上一轮选型列表中{hint}，需重新查库存。\"\n    )\n\n"
+        code_language: python3
+        outputs:
+          available_qty:
+            children: null
+            type: string
+          extract_ok:
+            children: null
+            type: string
+          match_count:
+            children: null
+            type: string
+          material_code:
+            children: null
+            type: string
+          material_name:
+            children: null
+            type: string
+          pick_list:
+            children: null
+            type: string
+          pick_required:
+            children: null
+            type: string
+          unit:
+            children: null
+            type: string
+        selected: false
+        title: 代码执行 13
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: user_query
+        - value_selector:
+          - conversation
+          - requisition_pick_cache_json
+          value_type: string
+          variable: pick_cache_json
+        - value_selector:
+          - conversation
+          - requisition_intent_query
+          value_type: string
+          variable: pending_intent_query
+      height: 52
+      id: '1781256196304'
+      position:
+        x: 3321.289129884048
+        y: 435.90639552924756
+      positionAbsolute:
+        x: 3321.289129884048
+        y: 435.90639552924756
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 9e0d74ce-f84d-43b9-8653-0db5d498f246
+            value: 'true'
+            varType: string
+            variable_selector:
+            - '1781256196304'
+            - extract_ok
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支 7
+        type: if-else
+      height: 124
+      id: '1781256514330'
+      position:
+        x: 4598.435717371774
+        y: 435.90639552924756
+      positionAbsolute:
+        x: 4598.435717371774
+        y: 435.90639552924756
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 缓存未命中，请重试或重新领料
+        selected: false
+        title: 直接回复 8
+        type: answer
+        variables: []
+      height: 100
+      id: '1781256663503'
+      position:
+        x: 5045.132615177853
+        y: 517.0768274034875
+      positionAbsolute:
+        x: 5045.132615177853
+        y: 517.0768274034875
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781256196304'
+          - material_code
+          variable_selector:
+          - conversation
+          - requisition_material_code
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781256196304'
+          - material_name
+          variable_selector:
+          - conversation
+          - requisition_material_name
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781256196304'
+          - unit
+          variable_selector:
+          - conversation
+          - requisition_inventory_unit
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1781256196304'
+          - available_qty
+          variable_selector:
+          - conversation
+          - requisition_available_qty
+          write_mode: over-write
+        - input_type: constant
+          operation: set
+          value: 'false'
+          variable_selector:
+          - conversation
+          - requisition_pick_waiting
+          write_mode: over-write
+        - input_type: constant
+          operation: set
+          value: 'false'
+          variable_selector:
+          - conversation
+          - requisition_pick_required
+          write_mode: over-write
+        - input_type: constant
+          operation: set
+          value: '""'
+          variable_selector:
+          - conversation
+          - requisition_pick_cache_json
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 3缓存
+        type: assigner
+        version: '2'
+      height: 240
+      id: '17812724593290'
+      position:
+        x: 5411.764069124046
+        y: 755.9149737250056
+      positionAbsolute:
+        x: 5411.764069124046
+        y: 755.9149737250056
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -1534.3894533059542
+      y: 47.87405202963049
+      zoom: 0.5028506589201385
+  rag_pipeline_variables: []

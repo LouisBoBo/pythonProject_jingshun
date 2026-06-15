@@ -1,0 +1,31 @@
+# 技术栈定义
+框架: Vue 3 (Composition API + <script setup>)
+UI 库: Element Plus (按需导入)
+语言: TypeScript + SCSS
+构建: Vite
+状态管理: Pinia
+路由: Vue Router
+
+# 文件命名规范
+- 组件文件: PascalCase，如 UserProfile.vue
+- 视图文件: camelCase，如 staffMgmt.vue
+- API 文件: camelCase，如 staffMgmt.ts
+
+# Vue 组件结构规范
+- template: 使用 Element Plus 组件
+- script setup: 
+  - lang="ts"
+  - 定义 name 属性（与文件名相同）
+  - 按顺序导入：Vue 核心 -> UI 库 -> 自定义模块
+- style: scoped + lang="scss"，类名与文件名对应
+
+# API 文件规范
+- 使用统一的 request 实例
+- 类型定义（interface）放在 API 函数之前
+- 命名：getXxxApi / postXxxApi / putXxxApi / delXxxApi
+
+# 样式规范
+- 禁止行内样式
+- 必须设置 scoped
+- 必须由根节点类包裹
+- 使用 SCSS 变量管理主题色
